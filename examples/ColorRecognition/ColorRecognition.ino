@@ -25,16 +25,20 @@ void setup() {
 #endif  // SENTRY_UART
   printf("sentry.begin: %s[0x%x]\n", err ? "Error" : "Success", err);
   printf("Sentry image_shape = %hux%hu\n", sentry.cols(), sentry.rows());
+  int param_num = 4;       // 1~25
+  sentry.SetParamNum(kVisionColorRecog, param_num);
   sentry_object_t param;
   param.x_value = 160;
   param.y_value = 120;
   param.width = 5;
   param.height = 5;
-  for (size_t i = 0; i < 4; i++)
+  for (size_t i = 0; i < param_num; i++)
   {
-    param.x_value = sentry.cols() * (i + 1) / 5;
+    param.x_value = sentry.cols() * (i + 1) / (param_num + 1);
     param.width = i * 2 + 1;
     param.height = i * 2 + 1;
+    printf("\nSetParam[%u]: %hu,%hu,%hu,%hu\n", i, param.x_value, param.y_value,
+           param.width, param.height);
     err = sentry.SetParam(kVisionColorRecog, &param, i);
     if (err) {
       printf("sentry.SetParam: %s[0x%x]\n", err ? "Error" : "Success", err);
@@ -54,9 +58,7 @@ void loop() {
     for (int i = 0; i < obj_num; ++i) {
       int l = sentry.GetValue(kVisionColorRecog, kLabel, i);
       printf("|%02d", l);
-      if (i && (i + 1) % 5 == 0) {
-        printf("|\n");
-      }
     }
+    printf("|\n");
   }
 }

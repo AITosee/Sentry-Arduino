@@ -125,6 +125,17 @@ int Sentry::GetValue(sentry_vision_e vision_type, sentry_obj_info_e obj_info,
   }
 }
 
+uint8_t Sentry::SetParamNum(sentry_vision_e vision_type, int max_num) {
+  sentry_err_t err;
+
+  err = stream_->Set(kRegVisionId, vision_type);
+  if (err) return err;
+
+  err = stream_->Set(kRegParamNum, max_num);
+
+  return err;
+}
+
 sentry_vision_state_t *Sentry::GetVisionState(sentry_vision_e vision_type) {
   return vision_state_[vision_type - 1];
 }

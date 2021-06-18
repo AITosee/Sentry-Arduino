@@ -195,6 +195,17 @@ class Sentry {
     }
     return nullptr;
   }
+
+  /**
+   * @brief  Set max detect object number.
+   * @param  vision_type: vision type.
+   * @param  param:  vision parameter
+   * @param  max_num:  max number
+   * @retval SENTRY_OK:  success
+   *         other:  error
+   */
+  uint8_t SetParamNum(sentry_vision_e vision_type, int max_num);
+
   /**
    * @brief  write vision parameter.
    * @param  vision_type: vision type.

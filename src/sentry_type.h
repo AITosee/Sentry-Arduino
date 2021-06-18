@@ -93,6 +93,8 @@ typedef enum {
   kRegVisionId        = 0x20,
   kRegVisionConfig1   = 0x21,
   kRegVisionConfig2   = 0x22,
+  kRegParamNum        = 0x23,
+  kRegParamId         = 0x24,
   kRegVisionStatus1   = 0x2A,
   kRegVisionStatus2   = 0x2B,
   kRegVisionDetect1   = 0x30,
