@@ -21,6 +21,8 @@ extern "C" {
 
 #include <stdint.h>
 
+#include "hardware/hw_conf.h"
+
 typedef unsigned char sentry_err_t;
 
 #ifdef BIT
@@ -28,7 +30,9 @@ typedef unsigned char sentry_err_t;
 #endif
 #define BIT(x) (0x01<<(x))
 
+#if !defined(SENTRY_MAX_RESULT)
 #define SENTRY_MAX_RESULT                 25
+#endif
 
 #define SENTRY_DEVICE_ID                  0x04
 #define SENTRY_FIRMWARE_VERSION           0xFF
@@ -46,15 +50,15 @@ typedef unsigned char sentry_err_t;
 typedef enum {
   kVisionColorRecog       = 1,
   kVisionColorDetect      = 2,
-  kVisionBall             = 3,
-  kVisionLine             = 3,
+  kVisionAprilTag         = 3,
+  kVisionLine             = 4,
   kVisionBody             = 5,
   kVisionCard             = 6,
   kVisionFace             = 7,
   kVision20Classes        = 8,
   kVisionQrCode           = 9,
   kVisionObjTrack         = 10,
-  kVisionMovingObjDetect  = 11,
+  kVisionMotionDetect     = 11,
   kVisionMaxType          ,
 } sentry_vision_e;
 typedef enum {
@@ -142,9 +146,9 @@ typedef enum {
   kBaud38400    = 0x02,
   kBaud57600    = 0x03,
   kBaud115200   = 0x04,
-  kBaud230400   = 0x05,
-  kBaud460800   = 0x06,
-  kBaud921600   = 0x07,
+  kBaud921600   = 0x05,
+  kBaud1152000  = 0x06,
+  kBaud2000000  = 0x07,
 } sentry_baudrate_e;
 typedef enum {
   kStatus,        //!< whether the target is detected
@@ -182,17 +186,13 @@ typedef enum {
   kYellowLight            = 3,    //!< yellow light mode
   kWhiteBalanceCalibrating,
 } sentry_camera_white_balance_e;
-// typedef enum {
-//   kLevelDefault         = 0,
-//   kLevelSpeed           = 1,      //!< speed first mode
-//   kLevelBalance         = 2,      //!< balance mode
-//   kLevelAccuracy        = 3,      //!< accuracy first mode
-// } MuVsVisionLevel;
 /* register type */
 typedef union {
   struct {
-    unsigned char reserve0 : 2;
+    unsigned char start_up :1;
+    unsigned char auto_save :1;
     unsigned char default_setting :1;  //!< set 1 reset all config
+    unsigned char disable_vison :1;
   };
   unsigned char sensor_config_reg_value;
 } sentry_sensor_conf_t;
@@ -271,6 +271,7 @@ typedef struct {
   uint16_t length;
   char str[20 + 1];
 } sentry_qrcode_t;
+
 typedef struct {
   unsigned char frame;
   unsigned char detect;

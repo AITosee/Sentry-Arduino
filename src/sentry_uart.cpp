@@ -195,7 +195,9 @@ sentry_err_t SentryUart::ReadQrCode(sentry_qrcode_state_t* qrcode) {
           ret_val.buf[3] == kVisionQrCode) {
         if (ret_val.buf[1] == SENTRY_PROTOC_GET_RESULT) {
           qrcode->frame = ret_val.buf[2];
-          qrcode->detect = (ret_val.buf[5] - ret_val.buf[4]) > 0;
+          qrcode->detect = 0;
+          if (ret_val.buf[5] == 0) return SENTRY_OK;
+          qrcode->detect = (ret_val.buf[5] - ret_val.buf[4] + 1) > 0;
           if (!qrcode->detect) return SENTRY_OK;
           uint8_t* presult = &ret_val.buf[6];
           qrcode->qrcode_result[0].x_value = presult[0] << 8 | presult[1];

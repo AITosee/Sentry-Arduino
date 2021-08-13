@@ -84,7 +84,7 @@ uint8_t Sentry::begin(HwSentryUart::hw_uart_t communication_port) {
   return SensorInit();
 }
 
-uint8_t Sentry::begin(hw_i2c_t *communication_port) {
+uint8_t Sentry::begin(HwSentryI2C::hw_i2c_t *communication_port) {
   if (mode_ == kI2CMode) {
     return SENTRY_OK;
   }
@@ -94,7 +94,7 @@ uint8_t Sentry::begin(hw_i2c_t *communication_port) {
   }
 
   mode_ = kI2CMode;
-  stream_ = new HwSentryI2C(communication_port, address_);
+  stream_ = new SentryI2C(communication_port, address_);
 
   return SensorInit();
 }
@@ -128,6 +128,7 @@ int Sentry::GetValue(sentry_vision_e vision_type, sentry_obj_info_e obj_info,
 uint8_t Sentry::SetParamNum(sentry_vision_e vision_type, int max_num) {
   sentry_err_t err;
 
+  max_num = max_num > SENTRY_MAX_RESULT ? SENTRY_MAX_RESULT : max_num;
   err = stream_->Set(kRegVisionId, vision_type);
   if (err) return err;
 
@@ -301,9 +302,11 @@ uint8_t Sentry::SensorSetDefault(void) {
   sentry_sensor_conf_t sensor_config1;
   sentry_err_t err;
   sensor_config1.sensor_config_reg_value = 0;
-  sensor_config1.default_setting = 1;
+  // TODO: now, set default only disable all visions
+  // sensor_config1.default_setting = 1;
+  sensor_config1.disable_vison = 1;
   err = stream_->Set(kRegSensorConfig1, sensor_config1.sensor_config_reg_value);
-  while (sensor_config1.default_setting) {
+  while (sensor_config1.disable_vison) {
     err = stream_->Get(kRegSensorConfig1,
                        &sensor_config1.sensor_config_reg_value);
     if (err) return err;
@@ -312,7 +315,7 @@ uint8_t Sentry::SensorSetDefault(void) {
 }
 
 uint8_t Sentry::SensorLockReg(bool lock) {
-  sentry_err_t err;
+  sentry_err_t err = SENTRY_OK;
   err = stream_->Set(kRegLock, lock);
   return err;
 }

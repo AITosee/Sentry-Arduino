@@ -15,40 +15,9 @@
 #ifndef SENTRY_H_
 #define SENTRY_H_
 
-#include "hardware/hw_sentry_i2c.h"
+#include "sentry_i2c.h"
 #include "sentry_stream_base.h"
 #include "sentry_uart.h"
-
-/*
- * sentry_vision_mask_t
- */
-typedef unsigned short sentry_vision_mask_t;
-
-// sentry_vision_mask_t: Vision Type User Input
-#define VISION_COLOR_DETECT_MASK \
-  (sentry_vision_mask_t) visionTypeEnumToMacro(kVisionColorDetect)
-#define VISION_COLOR_RECOGNITION_MASK \
-  (sentry_vision_mask_t) visionTypeEnumToMacro(kVisionColorRecog)
-#define VISION_BALL_DETECT_MASK \
-  (sentry_vision_mask_t) visionTypeEnumToMacro(kVisionBall)
-#define VISION_LINE_DETECT_MASK \
-  (sentry_vision_mask_t) visionTypeEnumToMacro(kVisionLine)
-#define VISION_BODY_DETECT_MASK \
-  (sentry_vision_mask_t) visionTypeEnumToMacro(kVisionBody)
-#define VISION_CARD_DETECT_MASK \
-  (sentry_vision_mask_t) visionTypeEnumToMacro(kVisionCard)
-#define VISION_FACE_DETECT_MASK \
-  (sentry_vision_mask_t) visionTypeEnumToMacro(kVisionFace)
-#define VISION_20CLASSES_DETECT_MASK \
-  (sentry_vision_mask_t) visionTypeEnumToMacro(kVision20Classes)
-#define VISION_QR_CODE_DETECT_MASK \
-  (sentry_vision_mask_t) visionTypeEnumToMacro(kVisionQrCode)
-#define VISION_OBJ_TRACK_MASK \
-  (sentry_vision_mask_t) visionTypeEnumToMacro(kVisionObjTrack)
-#define VISION_MOVING_OBJ_DETECT_MASK \
-  (sentry_vision_mask_t) visionTypeEnumToMacro(kVisionMovingObjDetect)
-#define VISION_ALL_MASK \
-  (sentry_vision_mask_t)(visionTypeEnumToMacro(kVisionMaxType) - 1)
 
 /* Sentry label */
 #define SENTRY_UNKNOWN_LABEL 0U
@@ -163,7 +132,7 @@ class Sentry {
    * @retval SENTRY_OK: begin success.
    *         other: protocol assert fail.
    */
-  uint8_t begin(hw_i2c_t* communication_port);
+  uint8_t begin(HwSentryI2C::hw_i2c_t* communication_port);
 
   // Based interface
   /**

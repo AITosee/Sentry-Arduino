@@ -1,10 +1,10 @@
 #include "hw_sentry_i2c.h"
 #include <Arduino.h>
 #include "debug/debug_tool.h"
+#include "sentry_type.h"
 
 HwSentryI2C::HwSentryI2C(hw_i2c_t* i2c_port, uint32_t address)
-    : SentryI2C(address),
-      i2c_port_(i2c_port) {
+    : i2c_port_(i2c_port), sentry_address_(address) {
 }
 
 HwSentryI2C::~HwSentryI2C() {}
@@ -42,11 +42,6 @@ uint32_t HwSentryI2C::I2CWrite(uint8_t reg_address, uint8_t value) {
   //Debug Output
 #if SENTRY_DEBUG_ENABLE && LOG_OUTPUT
   printf("[W:%02x,%02x],",reg_address,value);
-//  Serial.print("[W:");
-//  Serial.print(reg_address, HEX);
-//  Serial.print(',');
-//  Serial.print(value, HEX);
-//  Serial.print("],");
 #endif
   return SENTRY_OK;
 }

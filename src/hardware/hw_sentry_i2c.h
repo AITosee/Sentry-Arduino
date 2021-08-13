@@ -15,10 +15,7 @@
 #ifndef HW_SENTRY_I2C_H_
 #define HW_SENTRY_I2C_H_
 
-#include "sentry_i2c.h"
 #include <Wire.h>
-//@type define I2C type
-typedef TwoWire hw_i2c_t;
 
 // if u want to use software wire in arduino, change include and hw_i2c_t type here
 //#include <SoftwareWire.h>
@@ -27,8 +24,10 @@ typedef TwoWire hw_i2c_t;
 
 
 // @Must public inheritance class SentryI2C
-class HwSentryI2C: public SentryI2C {
+class HwSentryI2C {
  public:
+  //@type define I2C type
+  typedef TwoWire hw_i2c_t;
   HwSentryI2C(hw_i2c_t* i2c_port, uint32_t address);
   virtual ~HwSentryI2C();
   HwSentryI2C(const HwSentryI2C&) = delete;
@@ -41,7 +40,7 @@ class HwSentryI2C: public SentryI2C {
   * @retval 0: read success
   *         not 0: error
   */
-  virtual uint32_t I2CRead(uint8_t reg_address, uint8_t* temp) override;
+  virtual uint32_t I2CRead(uint8_t reg_address, uint8_t* temp);
 /**
   * @brief  I2C write byte.
   * @param  reg_address: register address.
@@ -49,10 +48,11 @@ class HwSentryI2C: public SentryI2C {
   * @retval 0: write success
   *         not 0: error
   */
-  virtual uint32_t I2CWrite(uint8_t reg_address, uint8_t value) override;
+  virtual uint32_t I2CWrite(uint8_t reg_address, uint8_t value);
 
  private:
   hw_i2c_t* i2c_port_ = nullptr;
+  int sentry_address_;
 
  protected:
 };

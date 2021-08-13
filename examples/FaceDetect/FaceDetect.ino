@@ -2,6 +2,8 @@
 #include <Sentry.h>
 #include <Wire.h>
 
+// #define SENTRY_I2C
+#define SENTRY_UART
 #define VISION_MASK kVisionFace
 
 Sentry sentry;
@@ -14,15 +16,18 @@ int serial_putc(char c, struct __file*) {
 void setup() {
   Serial.begin(9600);
   fdevopen(&serial_putc, 0);
-  printf("sizeof(Sentry) = %u\n", sizeof(Sentry));
-  printf("sizeof(sentry_vision_state_t) = %u\n", sizeof(sentry_vision_state_t));
-  printf("Wire.begin\n");
+#ifdef SENTRY_I2C
   Wire.begin();
   sentry_err_t err = sentry.begin(&Wire);
+#endif  // SENTRY_I2C
+#ifdef SENTRY_UART
+  Serial3.begin(9600);
+  sentry_err_t err = sentry.begin(&Serial3);
+#endif  // SENTRY_UART
   printf("sentry.begin: %s[0x%x]\n", err ? "Error" : "Success", err);
   printf("Sentry image_shape = %hux%hu\n", sentry.cols(), sentry.rows());
   err = sentry.VisionBegin(VISION_MASK);
-  printf("sentry.VisionBegin(VISION_FACE_DETECT_MASK): %s[0x%x]\n", err ? "Error" : "Success", err);
+  printf("sentry.VisionBegin(kVisionFace): %s[0x%x]\n", err ? "Error" : "Success", err);
 }
 
 void loop() {
