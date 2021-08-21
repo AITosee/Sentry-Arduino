@@ -43,7 +43,7 @@ void setup() {
   printf("sentry.begin: %s[0x%x]\n", err ? "Error" : "Success", err);
   printf("Sentry image_shape = %dx%d\n", sentry.cols(), sentry.rows());
   err = sentry.VisionBegin(VISION_MASK);
-  printf("sentry.VisionBegin(VISION_MASK): %s[0x%x]\n", err ? "Error" : "Success", err);
+  printf("sentry.VisionBegin(kVisionCard): %s[0x%x]\n", err ? "Error" : "Success", err);
 }
 
 void loop() {
