@@ -14,6 +14,21 @@ Sentry::~Sentry() {
   }
 }
 
+uint8_t Sentry::SensorStartupCheck() {
+  sentry_sensor_conf_t conf1;
+  int err_count = 0;
+  sentry_err_t err;
+  for (;;) {
+    if (++err_count > 100) return SENTRY_FAIL;  // set max retry times
+    err = stream_->Get(kRegSensorConfig1, &conf1.sensor_config_reg_value);
+    if (!err && conf1.start_up) break;
+    int32_t delay = 1000000;
+    while (delay--)
+      ;
+  }
+  return err;
+}
+
 uint8_t Sentry::ProtocolVersionCheck() {
   uint8_t device_id = 0;
   uint8_t firmware_version = 0;
@@ -56,11 +71,15 @@ uint8_t Sentry::GetImageShape() {
 uint8_t Sentry::SensorInit() {
   sentry_err_t err;
 
+  /* Check sensor startup*/
+  err = SensorStartupCheck();
+  if (err) return err;
   /* Check sentry protocol version */
   err = ProtocolVersionCheck();
   if (err) return err;
   /* Sensor set default if version is correction. */
   err = SensorSetDefault();
+  if (err) return err;
   /* Get sensor image shape. */
   err = GetImageShape();
   if (err) return err;
@@ -203,10 +222,10 @@ uint8_t Sentry::UpdateResult(sentry_vision_e vision_type) {
   if (kVisionQrCode == vision_type && qrcode_state_) {
     if (frame != qrcode_state_->frame) {
       sentry_qrcode_state_t qrcode_state;
-      SensorLockReg(true);
+      while(SENTRY_OK != SensorLockReg(true));
       err = stream_->ReadQrCode(&qrcode_state);
+      while(SENTRY_OK != SensorLockReg(false));
       if (err) return err;
-      SensorLockReg(false);
       memcpy(qrcode_state_, &qrcode_state, sizeof(sentry_qrcode_state_t));
     } else {
       /* Result not update */
@@ -215,10 +234,10 @@ uint8_t Sentry::UpdateResult(sentry_vision_e vision_type) {
   } else if (vision_state_[vision_type - 1]) {
     if (frame != vision_state_[vision_type - 1]->frame) {
       sentry_vision_state_t vision_state;
-      SensorLockReg(true);
+      while(SENTRY_OK != SensorLockReg(true));
       err = stream_->Read(vision_type, &vision_state);
+      while(SENTRY_OK != SensorLockReg(false));
       if (err) return err;
-      SensorLockReg(false);
       memcpy(vision_state_[vision_type - 1], &vision_state,
              sizeof(sentry_vision_state_t));
     } else {
@@ -230,7 +249,6 @@ uint8_t Sentry::UpdateResult(sentry_vision_e vision_type) {
     return SENTRY_FAIL;
   }
 
-  // return vision_type_output;
   return SENTRY_OK;
 }
 
@@ -301,8 +319,9 @@ uint8_t Sentry::SensorSetRestart(void) {
 uint8_t Sentry::SensorSetDefault(void) {
   sentry_sensor_conf_t sensor_config1;
   sentry_err_t err;
-  sensor_config1.sensor_config_reg_value = 0;
-  // TODO: now, set default only disable all visions
+  err = stream_->Get(kRegSensorConfig1, &sensor_config1.sensor_config_reg_value);
+  if (err) return err;
+  // XXX: now, set default only disable all visions
   // sensor_config1.default_setting = 1;
   sensor_config1.disable_vison = 1;
   err = stream_->Set(kRegSensorConfig1, sensor_config1.sensor_config_reg_value);

@@ -341,6 +341,7 @@ class Sentry {
  private:
   uint8_t SensorInit();
   uint8_t SensorLockReg(bool lock);
+  uint8_t SensorStartupCheck();
   uint8_t ProtocolVersionCheck();
   uint8_t GetImageShape();
   bool malloc_vision_buffer(sentry_vision_e);
