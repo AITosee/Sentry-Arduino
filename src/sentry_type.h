@@ -48,8 +48,8 @@ typedef unsigned char sentry_err_t;
 #define SENTRY_UNKNOWN_PROTOCOL           0x11
 
 typedef enum {
-  kVisionColorRecog       = 1,
-  kVisionColorDetect      = 2,
+  kVisionColor            = 1,
+  kVisionBlob             = 2,
   kVisionAprilTag         = 3,
   kVisionLine             = 4,
   kVisionBody             = 5,
