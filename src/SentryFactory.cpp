@@ -1,10 +1,11 @@
-#include "Sentry.h"
+#include "SentryFactory.h"
 
 #include "sentry_type.h"
 
-Sentry::Sentry(uint32_t address) : address_(address) {}
+SentryFactory::SentryFactory(uint32_t address, uint8_t device_id)
+    : address_(address), device_id_(device_id) {}
 
-Sentry::~Sentry() {
+SentryFactory::~SentryFactory() {
   if (stream_) {
     stream_ = nullptr;
     delete stream_;
@@ -14,7 +15,7 @@ Sentry::~Sentry() {
   }
 }
 
-uint8_t Sentry::SensorStartupCheck() {
+uint8_t SentryFactory::SensorStartupCheck() {
   sentry_sensor_conf_t conf1;
   int err_count = 0;
   sentry_err_t err;
@@ -29,7 +30,7 @@ uint8_t Sentry::SensorStartupCheck() {
   return err;
 }
 
-uint8_t Sentry::ProtocolVersionCheck() {
+uint8_t SentryFactory::ProtocolVersionCheck() {
   uint8_t device_id = 0;
   uint8_t firmware_version = 0;
   int err_count = 0;
@@ -50,7 +51,7 @@ uint8_t Sentry::ProtocolVersionCheck() {
   return err;
 }
 
-uint8_t Sentry::GetImageShape() {
+uint8_t SentryFactory::GetImageShape() {
   sentry_err_t err;
   uint8_t tmp[2] = {0};
 
@@ -68,7 +69,7 @@ uint8_t Sentry::GetImageShape() {
   return SENTRY_OK;
 }
 
-uint8_t Sentry::SensorInit() {
+uint8_t SentryFactory::SensorInit() {
   sentry_err_t err;
 
   /* Check sensor startup*/
@@ -87,7 +88,7 @@ uint8_t Sentry::SensorInit() {
   return SENTRY_OK;
 }
 
-uint8_t Sentry::begin(HwSentryUart::hw_uart_t communication_port) {
+uint8_t SentryFactory::begin(HwSentryUart::hw_uart_t communication_port) {
   if (mode_ == kSerialMode) {
     return SENTRY_OK;
   }
@@ -103,7 +104,7 @@ uint8_t Sentry::begin(HwSentryUart::hw_uart_t communication_port) {
   return SensorInit();
 }
 
-uint8_t Sentry::begin(HwSentryI2C::hw_i2c_t *communication_port) {
+uint8_t SentryFactory::begin(HwSentryI2C::hw_i2c_t *communication_port) {
   if (mode_ == kI2CMode) {
     return SENTRY_OK;
   }
@@ -119,18 +120,18 @@ uint8_t Sentry::begin(HwSentryI2C::hw_i2c_t *communication_port) {
 }
 
 // Advance interface
-uint8_t Sentry::VisionBegin(sentry_vision_e vision_type) {
+uint8_t SentryFactory::VisionBegin(sentry_vision_e vision_type) {
   sentry_err_t err;
   err = VisionSetStatus(vision_type, true);
   if (err) return err;
   return SENTRY_OK;
 }
 
-uint8_t Sentry::VisionEnd(sentry_vision_e vision_type) {
+uint8_t SentryFactory::VisionEnd(sentry_vision_e vision_type) {
   return VisionSetStatus(vision_type, false);
 }
 
-int Sentry::GetValue(sentry_vision_e vision_type, sentry_obj_info_e obj_info,
+int SentryFactory::GetValue(sentry_vision_e vision_type, sentry_obj_info_e obj_info,
                      int obj_id) {
   if (obj_info == kStatus) {
     while (UpdateResult(vision_type))
@@ -144,7 +145,7 @@ int Sentry::GetValue(sentry_vision_e vision_type, sentry_obj_info_e obj_info,
   }
 }
 
-uint8_t Sentry::SetParamNum(sentry_vision_e vision_type, int max_num) {
+uint8_t SentryFactory::SetParamNum(sentry_vision_e vision_type, int max_num) {
   sentry_err_t err;
 
   max_num = max_num > SENTRY_MAX_RESULT ? SENTRY_MAX_RESULT : max_num;
@@ -156,11 +157,11 @@ uint8_t Sentry::SetParamNum(sentry_vision_e vision_type, int max_num) {
   return err;
 }
 
-sentry_vision_state_t *Sentry::GetVisionState(sentry_vision_e vision_type) {
+sentry_vision_state_t *SentryFactory::GetVisionState(sentry_vision_e vision_type) {
   return vision_state_[vision_type - 1];
 }
 
-uint8_t Sentry::VisionSetStatus(sentry_vision_e vision_type, bool enable) {
+uint8_t SentryFactory::VisionSetStatus(sentry_vision_e vision_type, bool enable) {
   sentry_err_t err;
   sentry_vision_conf1_t vision_config1;
 
@@ -184,7 +185,7 @@ uint8_t Sentry::VisionSetStatus(sentry_vision_e vision_type, bool enable) {
   return SENTRY_OK;
 }
 
-uint8_t Sentry::VisionSetDefault(sentry_vision_e vision_type) {
+uint8_t SentryFactory::VisionSetDefault(sentry_vision_e vision_type) {
   sentry_err_t err;
   sentry_vision_conf1_t vision_config1;
 
@@ -205,7 +206,7 @@ uint8_t Sentry::VisionSetDefault(sentry_vision_e vision_type) {
   return SENTRY_OK;
 }
 
-bool Sentry::VisionGetStatus(sentry_vision_e vision_type) {
+bool SentryFactory::VisionGetStatus(sentry_vision_e vision_type) {
   uint8_t vision_status1 = 0;
 
   stream_->Get(kRegVisionConfig1, &vision_status1);
@@ -213,7 +214,7 @@ bool Sentry::VisionGetStatus(sentry_vision_e vision_type) {
   return (0x01 << vision_type) & vision_status1;
 }
 
-uint8_t Sentry::UpdateResult(sentry_vision_e vision_type) {
+uint8_t SentryFactory::UpdateResult(sentry_vision_e vision_type) {
   sentry_err_t err;
   uint8_t frame;
 
@@ -254,8 +255,8 @@ uint8_t Sentry::UpdateResult(sentry_vision_e vision_type) {
   return SENTRY_OK;
 }
 
-uint8_t Sentry::read(sentry_vision_e vision_type, sentry_obj_info_e obj_info,
-                     uint8_t obj_id) {
+uint8_t SentryFactory::read(sentry_vision_e vision_type,
+                            sentry_obj_info_e obj_info, uint8_t obj_id) {
   uint8_t vision_pointer = vision_type - 1;
 
   obj_id = obj_id > SENTRY_MAX_RESULT ? SENTRY_MAX_RESULT : obj_id;
@@ -289,7 +290,7 @@ uint8_t Sentry::read(sentry_vision_e vision_type, sentry_obj_info_e obj_info,
   }
 }
 
-uint8_t Sentry::readQrCode(sentry_obj_info_e obj_info) {
+uint8_t SentryFactory::readQrCode(sentry_obj_info_e obj_info) {
   switch (obj_info) {
     case kStatus:
       return qrcode_state_->detect;
@@ -312,13 +313,13 @@ uint8_t Sentry::readQrCode(sentry_obj_info_e obj_info) {
   }
 }
 
-uint8_t Sentry::SensorSetRestart(void) {
+uint8_t SentryFactory::SensorSetRestart(void) {
   sentry_err_t err;
   err = stream_->Set(kRegRestart, 1);
   return err;
 }
 
-uint8_t Sentry::SensorSetDefault(void) {
+uint8_t SentryFactory::SensorSetDefault(void) {
   sentry_sensor_conf_t sensor_config1;
   sentry_err_t err;
   err = stream_->Get(kRegSensorConfig1, &sensor_config1.sensor_config_reg_value);
@@ -335,7 +336,7 @@ uint8_t Sentry::SensorSetDefault(void) {
   return err;
 }
 
-uint8_t Sentry::SensorLockReg(bool lock) {
+uint8_t SentryFactory::SensorLockReg(bool lock) {
   sentry_err_t err = SENTRY_OK;
   uint8_t status;
   for (;;) {
@@ -351,7 +352,7 @@ uint8_t Sentry::SensorLockReg(bool lock) {
 }
 
 // LED functions
-uint8_t Sentry::LedSetMode(sentry_led_e led, bool manual, bool hold) {
+uint8_t SentryFactory::LedSetMode(sentry_led_e led, bool manual, bool hold) {
   sentry_led_conf_t led_config;
   sentry_reg_e address;
   sentry_err_t err;
@@ -382,7 +383,7 @@ uint8_t Sentry::LedSetMode(sentry_led_e led, bool manual, bool hold) {
   return err;
 }
 
-uint8_t Sentry::LedSetColor(sentry_led_e led, sentry_led_color_e detected_color,
+uint8_t SentryFactory::LedSetColor(sentry_led_e led, sentry_led_color_e detected_color,
                             sentry_led_color_e undetected_color,
                             uint8_t level) {
   sentry_led_conf_t led_config;
@@ -425,7 +426,7 @@ uint8_t Sentry::LedSetColor(sentry_led_e led, sentry_led_color_e detected_color,
 }
 
 // Camera functions
-uint8_t Sentry::CameraSetZoom(sentry_camera_zoom_e zoom) {
+uint8_t SentryFactory::CameraSetZoom(sentry_camera_zoom_e zoom) {
   sentry_camera_conf1_t camera_config1;
   sentry_err_t err;
   err = stream_->Get(kRegCameraConfig1, &camera_config1.camera_reg_value);
@@ -436,7 +437,7 @@ uint8_t Sentry::CameraSetZoom(sentry_camera_zoom_e zoom) {
   return err;
 }
 
-uint8_t Sentry::CameraSetRotate(bool enable) {
+uint8_t SentryFactory::CameraSetRotate(bool enable) {
   sentry_camera_conf1_t camera_config1;
   sentry_err_t err;
   err = stream_->Get(kRegCameraConfig1, &camera_config1.camera_reg_value);
@@ -447,7 +448,7 @@ uint8_t Sentry::CameraSetRotate(bool enable) {
   return err;
 }
 
-uint8_t Sentry::CameraSetFPS(sentry_camera_fps_e fps) {
+uint8_t SentryFactory::CameraSetFPS(sentry_camera_fps_e fps) {
   sentry_camera_conf1_t camera_config1;
   sentry_err_t err;
   err = stream_->Get(kRegCameraConfig1, &camera_config1.camera_reg_value);
@@ -458,7 +459,7 @@ uint8_t Sentry::CameraSetFPS(sentry_camera_fps_e fps) {
   return err;
 }
 
-uint8_t Sentry::CameraSetAwb(sentry_camera_white_balance_e awb) {
+uint8_t SentryFactory::CameraSetAwb(sentry_camera_white_balance_e awb) {
   sentry_camera_conf1_t camera_config1;
   sentry_err_t err;
   /* Waiting for camera white balance calibrating */
@@ -479,32 +480,32 @@ uint8_t Sentry::CameraSetAwb(sentry_camera_white_balance_e awb) {
   return err;
 }
 
-sentry_camera_zoom_e Sentry::CameraGetZoom(void) {
+sentry_camera_zoom_e SentryFactory::CameraGetZoom(void) {
   sentry_camera_conf1_t camera_config1;
   stream_->Get(kRegCameraConfig1, &camera_config1.camera_reg_value);
   return camera_config1.zoom;
 }
 
-sentry_camera_white_balance_e Sentry::CameraGetAwb(void) {
+sentry_camera_white_balance_e SentryFactory::CameraGetAwb(void) {
   sentry_camera_conf1_t camera_config1;
   stream_->Get(kRegCameraConfig1, &camera_config1.camera_reg_value);
   return camera_config1.white_balance;
 }
 
-bool Sentry::CameraGetRotate(void) {
+bool SentryFactory::CameraGetRotate(void) {
   sentry_camera_conf1_t camera_config1;
   stream_->Get(kRegCameraConfig1, &camera_config1.camera_reg_value);
   return camera_config1.rotate;
 }
 
-sentry_camera_fps_e Sentry::CameraGetFPS(void) {
+sentry_camera_fps_e SentryFactory::CameraGetFPS(void) {
   sentry_camera_conf1_t camera_config1;
   stream_->Get(kRegCameraConfig1, &camera_config1.camera_reg_value);
   return camera_config1.fps;
 }
 
 // Uart functions
-uint8_t Sentry::UartSetBaudrate(sentry_baudrate_e baud) {
+uint8_t SentryFactory::UartSetBaudrate(sentry_baudrate_e baud) {
   sentry_err_t err;
   sentry_uart_conf_t uart_config;
   err = stream_->Get(kRegUart, &uart_config.uart_reg_value);
@@ -515,7 +516,7 @@ uint8_t Sentry::UartSetBaudrate(sentry_baudrate_e baud) {
   return err;
 }
 
-bool Sentry::malloc_vision_buffer(sentry_vision_e vision_type) {
+bool SentryFactory::malloc_vision_buffer(sentry_vision_e vision_type) {
   if (vision_type && vision_type < kVisionMaxType) {
     if (kVisionQrCode == vision_type && nullptr == qrcode_state_) {
       qrcode_state_ = new sentry_qrcode_state_t;
@@ -528,7 +529,7 @@ bool Sentry::malloc_vision_buffer(sentry_vision_e vision_type) {
   return false;
 }
 
-bool Sentry::free_vision_buffer(sentry_vision_e vision_type) {
+bool SentryFactory::free_vision_buffer(sentry_vision_e vision_type) {
   if (vision_type && vision_type < kVisionMaxType) {
     if (kVisionQrCode == vision_type && nullptr == qrcode_state_) {
       delete qrcode_state_;

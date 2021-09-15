@@ -161,12 +161,6 @@ typedef enum {
   kGValue,        //!< G channel value
   kBValue,        //!< B channel value
 } sentry_obj_info_e;
-// typedef enum {
-//   //!< for UART mode only
-//   kCallBackMode = 0,      //!< u need send a request first, and wait for response
-//   kDataFlowMode = 1,      //!< Sentry will automatically response the result of the vision that u enabled, whether it detected or undetected
-//   kEventMode    = 2,      //!< Sentry can only automatically response the result of the vision that u enabled, which detected target
-// } MuVsStreamOutputMode;
 typedef enum {
   kZoomDefault  = 0,
   kZoom1        = 1,
@@ -224,10 +218,6 @@ typedef union {
   struct {
     unsigned char status :1;
     unsigned char default_setting :1;  //!< set 1 to reset vision configuration
-    // MuVsStreamOutputMode output_mode :2;
-    // MuVsVisionLevel level :2;
-    // unsigned char reserve6 :1;
-    // unsigned char output_enable :1;
   };
   unsigned char vision_config_reg_value;
 } sentry_vision_conf1_t;

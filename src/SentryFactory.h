@@ -19,9 +19,9 @@
 #include "sentry_stream_base.h"
 #include "sentry_uart.h"
 
-/* Sentry label */
+/* SentryFactory label */
 #define SENTRY_UNKNOWN_LABEL 0U
-/* Sentry card label */
+/* SentryFactory card label */
 #define SENTRY_CARD_FORWARD 1U
 #define SENTRY_CARD_LEFT 2U
 #define SENTRY_CARD_RIGHT 3U
@@ -77,7 +77,7 @@
 #define SENTRY_CARD_X 54U
 #define SENTRY_CARD_Y 55U
 #define SENTRY_CARD_Z 56U
-/* Sentry 20 classes label */
+/* SentryFactory 20 classes label */
 #define SENTRY_OBJ_AIRPLANE 1U
 #define SENTRY_OBJ_BICYCLE 2U
 #define SENTRY_OBJ_BIRD 3U
@@ -98,26 +98,27 @@
 #define SENTRY_OBJ_SOFA 18U
 #define SENTRY_OBJ_TRAIN 19U
 #define SENTRY_OBJ_MONITOR 20U
-/* Sentry color label */
+/* SentryFactory color label */
 #define SENTRY_COLOR_BLACK 1U
 #define SENTRY_COLOR_WHITE 2U
 #define SENTRY_COLOR_RED 3U
 #define SENTRY_COLOR_GREEN 4U
 #define SENTRY_COLOR_BLUE 5U
 #define SENTRY_COLOR_YELLOW 6U
-/* Sentry ball type */
+/* SentryFactory ball type */
 // #define SENTRY_BALL_TABLE_TENNIS 0x01U
 // #define SENTRY_BALL_TENNIS 0x02U
 
-class Sentry {
+class SentryFactory {
  public:
   /**
-   * @brief  Construct class Sentry.
-   * @param  address: Sentry vision sensor device address.
+   * @brief  Construct class SentryFactory.
+   * @param  address: Sentry device address.
+   * @param  device_id: Sentry device address.
    * @retval none
    */
-  Sentry(uint32_t address = 0x60);
-  virtual ~Sentry();
+  SentryFactory(uint32_t address, uint8_t device_id);
+  virtual ~SentryFactory();
 
   /**
    * @brief  Sentry begin with Serial.
@@ -335,8 +336,8 @@ class Sentry {
   int rows() { return (int)img_h_; }
   int cols() { return (int)img_w_; }
 
-  Sentry(const Sentry&) = delete;
-  Sentry& operator=(const Sentry&) = delete;
+  SentryFactory(const SentryFactory&) = delete;
+  SentryFactory& operator=(const SentryFactory&) = delete;
 
  private:
   uint8_t SensorInit();
@@ -347,6 +348,7 @@ class Sentry {
   bool malloc_vision_buffer(sentry_vision_e);
   bool free_vision_buffer(sentry_vision_e);
 
+  const uint8_t device_id_;
   uint8_t address_ = 0;
   sentry_mode_e mode_ = kUnknownMode;
   SentryStreamBase* stream_ = nullptr;
