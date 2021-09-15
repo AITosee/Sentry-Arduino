@@ -113,22 +113,22 @@ class Sentry {
  public:
   /**
    * @brief  Construct class Sentry.
-   * @param  address: MU vision sensor device address.
+   * @param  address: Sentry vision sensor device address.
    * @retval none
    */
   Sentry(uint32_t address = 0x60);
   virtual ~Sentry();
 
   /**
-   * @brief  MU vision sensor begin.
-   * @param  communication_port: MuVsUart(uart).
+   * @brief  Sentry begin with Serial.
+   * @param  communication_port: uart port.
    * @retval SENTRY_OK: begin success.
    *         other: protocol assert fail.
    */
   uint8_t begin(HwSentryUart::hw_uart_t communication_port);
   /**
-   * @brief  MU vision sensor begin.
-   * @param  communication_port: hw_i2c_t(i2c).
+   * @brief  Sentry begin with I2c.
+   * @param  communication_port: i2c port.
    * @retval SENTRY_OK: begin success.
    *         other: protocol assert fail.
    */
@@ -184,7 +184,7 @@ class Sentry {
    *         other:  error
    */
   uint8_t SetParam(sentry_vision_e vision_type, sentry_object_t* param,
-                   int param_id) {
+                   int param_id = 0) {
     if (param_id < 0 || param_id >= SENTRY_MAX_RESULT) {
       return SENTRY_FAIL;
     }
@@ -223,7 +223,7 @@ class Sentry {
   uint8_t readQrCode(sentry_obj_info_e obj_info);
 
   // Sensor functions
-  //!< @brief  restart MU vision sensor
+  //!< @brief  restart Sentry
   uint8_t SensorSetRestart(void);
   //!< @brief  set all register to default value(include baud rate)
   uint8_t SensorSetDefault(void);

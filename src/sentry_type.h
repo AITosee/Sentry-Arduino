@@ -164,8 +164,8 @@ typedef enum {
 // typedef enum {
 //   //!< for UART mode only
 //   kCallBackMode = 0,      //!< u need send a request first, and wait for response
-//   kDataFlowMode = 1,      //!< MU will automatically response the result of the vision that u enabled, whether it detected or undetected
-//   kEventMode    = 2,      //!< MU can only automatically response the result of the vision that u enabled, which detected target
+//   kDataFlowMode = 1,      //!< Sentry will automatically response the result of the vision that u enabled, whether it detected or undetected
+//   kEventMode    = 2,      //!< Sentry can only automatically response the result of the vision that u enabled, which detected target
 // } MuVsStreamOutputMode;
 typedef enum {
   kZoomDefault  = 0,

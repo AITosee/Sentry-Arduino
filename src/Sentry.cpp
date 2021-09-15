@@ -217,6 +217,8 @@ uint8_t Sentry::UpdateResult(sentry_vision_e vision_type) {
   sentry_err_t err;
   uint8_t frame;
 
+  /* Must make sure register is unlock! */
+  while(SENTRY_OK != SensorLockReg(false));
   err = stream_->Get(kRegFrameCount, &frame);
   if (err) return SENTRY_FAIL;
   if (kVisionQrCode == vision_type && qrcode_state_) {
@@ -335,7 +337,16 @@ uint8_t Sentry::SensorSetDefault(void) {
 
 uint8_t Sentry::SensorLockReg(bool lock) {
   sentry_err_t err = SENTRY_OK;
-  err = stream_->Set(kRegLock, lock);
+  uint8_t status;
+  for (;;) {
+    stream_->Get(kRegLock, &status);
+    if (err) return err;
+    if (status == lock) {
+      return SENTRY_OK;
+    }
+    err = stream_->Set(kRegLock, lock);
+    if (err) return err;
+  }
   return err;
 }
 
