@@ -2,9 +2,11 @@
 #include <Sentry.h>
 #include <Wire.h>
 
+typedef Sentry2 Sentry;
+
 // #define SENTRY_I2C
 #define SENTRY_UART
-#define VISION_MASK kVisionLine
+#define VISION_MASK Sentry::kVisionLine
 
 Sentry sentry;
 unsigned long ts = millis();

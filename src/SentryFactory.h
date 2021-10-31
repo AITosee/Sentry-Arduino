@@ -12,102 +12,102 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef SENTRY_H_
-#define SENTRY_H_
+#ifndef SENTRY_FACTORY_H_
+#define SENTRY_FACTORY_H_
 
 #include "sentry_i2c.h"
 #include "sentry_stream_base.h"
 #include "sentry_uart.h"
 
-/* SentryFactory label */
-#define SENTRY_UNKNOWN_LABEL 0U
-/* SentryFactory card label */
-#define SENTRY_CARD_FORWARD 1U
-#define SENTRY_CARD_LEFT 2U
-#define SENTRY_CARD_RIGHT 3U
-#define SENTRY_CARD_TURN_AROUND 4U
-#define SENTRY_CARD_PARK 5U
-#define SENTRY_CARD_GREEN_LIGHT 6U
-#define SENTRY_CARD_RED_LIGHT 7U
-#define SENTRY_CARD_SPEED_40 8U
-#define SENTRY_CARD_SPEED_60 9U
-#define SENTRY_CARD_SPEED_80 10U
-#define SENTRY_CARD_CHECK 11U
-#define SENTRY_CARD_CROSS 12U
-#define SENTRY_CARD_CIRCLE 13U
-#define SENTRY_CARD_SQUARE 14U
-#define SENTRY_CARD_TRIANGLE 15U
-#define SENTRY_CARD_PLUS 16U
-#define SENTRY_CARD_MINUS 17U
-#define SENTRY_CARD_DIVIDE 18U
-#define SENTRY_CARD_EQUAL 19U
-#define SENTRY_CARD_ZERO 20U
-#define SENTRY_CARD_ONE 21U
-#define SENTRY_CARD_TWO 22U
-#define SENTRY_CARD_THREE 23U
-#define SENTRY_CARD_FOUR 24U
-#define SENTRY_CARD_FIVE 25U
-#define SENTRY_CARD_SIX 26U
-#define SENTRY_CARD_SEVEN 27U
-#define SENTRY_CARD_EIGHT 28U
-#define SENTRY_CARD_NINE 29U
-#define SENTRY_CARD_A 31U
-#define SENTRY_CARD_B 32U
-#define SENTRY_CARD_C 33U
-#define SENTRY_CARD_D 34U
-#define SENTRY_CARD_E 35U
-#define SENTRY_CARD_F 36U
-#define SENTRY_CARD_G 37U
-#define SENTRY_CARD_H 38U
-#define SENTRY_CARD_I 39U
-#define SENTRY_CARD_J 40U
-#define SENTRY_CARD_K 41U
-#define SENTRY_CARD_L 42U
-#define SENTRY_CARD_M 43U
-#define SENTRY_CARD_N 44U
-#define SENTRY_CARD_O 45U
-#define SENTRY_CARD_P 46U
-#define SENTRY_CARD_Q 47U
-#define SENTRY_CARD_R 48U
-#define SENTRY_CARD_S 49U
-#define SENTRY_CARD_T 50U
-#define SENTRY_CARD_U 51U
-#define SENTRY_CARD_V 52U
-#define SENTRY_CARD_W 53U
-#define SENTRY_CARD_X 54U
-#define SENTRY_CARD_Y 55U
-#define SENTRY_CARD_Z 56U
-/* SentryFactory 20 classes label */
-#define SENTRY_OBJ_AIRPLANE 1U
-#define SENTRY_OBJ_BICYCLE 2U
-#define SENTRY_OBJ_BIRD 3U
-#define SENTRY_OBJ_BOAT 4U
-#define SENTRY_OBJ_BOTTLE 5U
-#define SENTRY_OBJ_BUS 6U
-#define SENTRY_OBJ_CAR 7U
-#define SENTRY_OBJ_CAT 8U
-#define SENTRY_OBJ_CHAIR 9U
-#define SENTRY_OBJ_COW 10U
-#define SENTRY_OBJ_TABLE 11U
-#define SENTRY_OBJ_DOG 12U
-#define SENTRY_OBJ_HORSE 13U
-#define SENTRY_OBJ_MOTOR_BIKE 14U
-#define SENTRY_OBJ_PERSON 15U
-#define SENTRY_OBJ_PLANT 16U
-#define SENTRY_OBJ_SHEEP 17U
-#define SENTRY_OBJ_SOFA 18U
-#define SENTRY_OBJ_TRAIN 19U
-#define SENTRY_OBJ_MONITOR 20U
-/* SentryFactory color label */
-#define SENTRY_COLOR_BLACK 1U
-#define SENTRY_COLOR_WHITE 2U
-#define SENTRY_COLOR_RED 3U
-#define SENTRY_COLOR_GREEN 4U
-#define SENTRY_COLOR_BLUE 5U
-#define SENTRY_COLOR_YELLOW 6U
-/* SentryFactory ball type */
-// #define SENTRY_BALL_TABLE_TENNIS 0x01U
-// #define SENTRY_BALL_TENNIS 0x02U
+// /* SentryFactory label */
+// #define SENTRY_UNKNOWN_LABEL 0U
+// /* SentryFactory card label */
+// #define SENTRY_CARD_FORWARD 1U
+// #define SENTRY_CARD_LEFT 2U
+// #define SENTRY_CARD_RIGHT 3U
+// #define SENTRY_CARD_TURN_AROUND 4U
+// #define SENTRY_CARD_PARK 5U
+// #define SENTRY_CARD_GREEN_LIGHT 6U
+// #define SENTRY_CARD_RED_LIGHT 7U
+// #define SENTRY_CARD_SPEED_40 8U
+// #define SENTRY_CARD_SPEED_60 9U
+// #define SENTRY_CARD_SPEED_80 10U
+// #define SENTRY_CARD_CHECK 11U
+// #define SENTRY_CARD_CROSS 12U
+// #define SENTRY_CARD_CIRCLE 13U
+// #define SENTRY_CARD_SQUARE 14U
+// #define SENTRY_CARD_TRIANGLE 15U
+// #define SENTRY_CARD_PLUS 16U
+// #define SENTRY_CARD_MINUS 17U
+// #define SENTRY_CARD_DIVIDE 18U
+// #define SENTRY_CARD_EQUAL 19U
+// #define SENTRY_CARD_ZERO 20U
+// #define SENTRY_CARD_ONE 21U
+// #define SENTRY_CARD_TWO 22U
+// #define SENTRY_CARD_THREE 23U
+// #define SENTRY_CARD_FOUR 24U
+// #define SENTRY_CARD_FIVE 25U
+// #define SENTRY_CARD_SIX 26U
+// #define SENTRY_CARD_SEVEN 27U
+// #define SENTRY_CARD_EIGHT 28U
+// #define SENTRY_CARD_NINE 29U
+// #define SENTRY_CARD_A 31U
+// #define SENTRY_CARD_B 32U
+// #define SENTRY_CARD_C 33U
+// #define SENTRY_CARD_D 34U
+// #define SENTRY_CARD_E 35U
+// #define SENTRY_CARD_F 36U
+// #define SENTRY_CARD_G 37U
+// #define SENTRY_CARD_H 38U
+// #define SENTRY_CARD_I 39U
+// #define SENTRY_CARD_J 40U
+// #define SENTRY_CARD_K 41U
+// #define SENTRY_CARD_L 42U
+// #define SENTRY_CARD_M 43U
+// #define SENTRY_CARD_N 44U
+// #define SENTRY_CARD_O 45U
+// #define SENTRY_CARD_P 46U
+// #define SENTRY_CARD_Q 47U
+// #define SENTRY_CARD_R 48U
+// #define SENTRY_CARD_S 49U
+// #define SENTRY_CARD_T 50U
+// #define SENTRY_CARD_U 51U
+// #define SENTRY_CARD_V 52U
+// #define SENTRY_CARD_W 53U
+// #define SENTRY_CARD_X 54U
+// #define SENTRY_CARD_Y 55U
+// #define SENTRY_CARD_Z 56U
+// /* SentryFactory 20 classes label */
+// #define SENTRY_OBJ_AIRPLANE 1U
+// #define SENTRY_OBJ_BICYCLE 2U
+// #define SENTRY_OBJ_BIRD 3U
+// #define SENTRY_OBJ_BOAT 4U
+// #define SENTRY_OBJ_BOTTLE 5U
+// #define SENTRY_OBJ_BUS 6U
+// #define SENTRY_OBJ_CAR 7U
+// #define SENTRY_OBJ_CAT 8U
+// #define SENTRY_OBJ_CHAIR 9U
+// #define SENTRY_OBJ_COW 10U
+// #define SENTRY_OBJ_TABLE 11U
+// #define SENTRY_OBJ_DOG 12U
+// #define SENTRY_OBJ_HORSE 13U
+// #define SENTRY_OBJ_MOTOR_BIKE 14U
+// #define SENTRY_OBJ_PERSON 15U
+// #define SENTRY_OBJ_PLANT 16U
+// #define SENTRY_OBJ_SHEEP 17U
+// #define SENTRY_OBJ_SOFA 18U
+// #define SENTRY_OBJ_TRAIN 19U
+// #define SENTRY_OBJ_MONITOR 20U
+// /* SentryFactory color label */
+// #define SENTRY_COLOR_BLACK 1U
+// #define SENTRY_COLOR_WHITE 2U
+// #define SENTRY_COLOR_RED 3U
+// #define SENTRY_COLOR_GREEN 4U
+// #define SENTRY_COLOR_BLUE 5U
+// #define SENTRY_COLOR_YELLOW 6U
+// /* SentryFactory ball type */
+// // #define SENTRY_BALL_TABLE_TENNIS 0x01U
+// // #define SENTRY_BALL_TENNIS 0x02U
 
 class SentryFactory {
  public:
@@ -117,7 +117,10 @@ class SentryFactory {
    * @param  device_id: Sentry device address.
    * @retval none
    */
-  SentryFactory(uint32_t address, uint8_t device_id);
+  SentryFactory(uint32_t address, uint8_t device_id,
+                sentry_vision_state_t** vision_state,
+                const int vision_max_type,
+                const int vision_qrcode_type = 0);
   virtual ~SentryFactory();
 
   /**
@@ -126,14 +129,14 @@ class SentryFactory {
    * @retval SENTRY_OK: begin success.
    *         other: protocol assert fail.
    */
-  uint8_t begin(HwSentryUart::hw_uart_t communication_port);
+  virtual uint8_t begin(HwSentryUart::hw_uart_t communication_port);
   /**
    * @brief  Sentry begin with I2c.
    * @param  communication_port: i2c port.
    * @retval SENTRY_OK: begin success.
    *         other: protocol assert fail.
    */
-  uint8_t begin(HwSentryI2C::hw_i2c_t* communication_port);
+  virtual uint8_t begin(HwSentryI2C::hw_i2c_t* communication_port);
 
   // Based interface
   /**
@@ -142,14 +145,14 @@ class SentryFactory {
    * @retval SENTRY_OK:  success
    *         other:  error
    */
-  uint8_t VisionBegin(sentry_vision_e vision_type);
+  virtual uint8_t VisionBegin(int vision_type);
   /**
    * @brief  end vision.
    * @param  vision_type: vision type.
    * @retval SENTRY_OK:  success
    *         other:  error
    */
-  uint8_t VisionEnd(sentry_vision_e vision_type);
+  virtual uint8_t VisionEnd(int vision_type);
   /**
    * @brief  get vision result data, this function will update vision
    *         result automatically.
@@ -157,9 +160,9 @@ class SentryFactory {
    * @param  obj_info:  object information
    * @retval information value
    */
-  int GetValue(sentry_vision_e vision_type, sentry_obj_info_e obj_info,
-               int obj_id = 0);
-  char* GetQrCodeValue() {
+  virtual int GetValue(int vision_type, sentry_obj_info_e obj_info,
+                       int obj_id = 0);
+  virtual char* GetQrCodeValue() {
     if (qrcode_state_) {
       return qrcode_state_->qrcode_result[0].str;
     }
@@ -167,14 +170,21 @@ class SentryFactory {
   }
 
   /**
+   * @brief  Get version max detect object number.
+   * @param  vision_type: vision type.
+   * @retval -1:  fail
+   *         other:  max detect object number
+   */
+  virtual int GetParamNum(int vision_type);
+
+  /**
    * @brief  Set max detect object number.
    * @param  vision_type: vision type.
-   * @param  param:  vision parameter
    * @param  max_num:  max number
    * @retval SENTRY_OK:  success
    *         other:  error
    */
-  uint8_t SetParamNum(sentry_vision_e vision_type, int max_num);
+  virtual uint8_t SetParamNum(int vision_type, int max_num);
 
   /**
    * @brief  write vision parameter.
@@ -184,7 +194,7 @@ class SentryFactory {
    * @retval SENTRY_OK:  success
    *         other:  error
    */
-  uint8_t SetParam(sentry_vision_e vision_type, sentry_object_t* param,
+  virtual uint8_t SetParam(int vision_type, sentry_object_t* param,
                    int param_id = 0) {
     if (param_id < 0 || param_id >= SENTRY_MAX_RESULT) {
       return SENTRY_FAIL;
@@ -196,12 +206,12 @@ class SentryFactory {
    *         this function WILL NOT update vision result, please use
    *         function `UpdateResult([vision_type])` or
    *         `GetValue([vision_type], kStatus)` to update vision result before
-   * this function
+   *         this function
    * @param  vision_type: vision type.
    * @retval vision result buffer pointer,
    *         return `nullptr` if the vision type is not `begin` or not supported
    */
-  sentry_vision_state_t* GetVisionState(sentry_vision_e vision_type);
+  virtual sentry_vision_state_t* GetVisionState(int vision_type);
 
   // Advance interface
   /**
@@ -212,44 +222,42 @@ class SentryFactory {
    *                           false: return if get one of the input vision type
    * @retval the vision type which have been updated
    */
-  uint8_t UpdateResult(sentry_vision_e vision_type);
+  virtual uint8_t UpdateResult(int vision_type);
   /**
    * @brief  read result data.
    * @param  vision_type vision type.
    * @param  obj_info  object information
    * @retval information value
    */
-  uint8_t read(sentry_vision_e vision_type, sentry_obj_info_e obj_info,
-               uint8_t obj_id = 0);
-  uint8_t readQrCode(sentry_obj_info_e obj_info);
+  virtual uint8_t read(int vision_type, sentry_obj_info_e obj_info,
+                       uint8_t obj_id = 0);
+  virtual uint8_t readQrCode(sentry_obj_info_e obj_info);
 
   // Sensor functions
   //!< @brief  restart Sentry
-  uint8_t SensorSetRestart(void);
+  virtual uint8_t SensorSetRestart(void);
   //!< @brief  set all register to default value(include baud rate)
-  uint8_t SensorSetDefault(void);
+  virtual uint8_t SensorSetDefault(void);
 
   // LED functions
   /**
    * @brief  set led.
-   * @param  led led type.
-   * @param  manual vision type.
-   * @param  hold  object information
+   * @param  manual manual mode.
    * @retval SENTRY_OK  success
    *         other  error
    */
-  uint8_t LedSetMode(sentry_led_e led, bool manual, bool hold);
+  virtual uint8_t LedSetMode(bool manual);
   /**
    * @brief  set led color.
-   * @param  led led type.
    * @param  detected_color led color while sensor detected target.
    * @param  undetected_color led color while sensor undetected target.
    * @param  level  led brightness, form 0(close) to 15
    * @retval SENTRY_OK  success
    *         other  error
    */
-  uint8_t LedSetColor(sentry_led_e led, sentry_led_color_e detected_color,
-                      sentry_led_color_e undetected_color, uint8_t level = 1);
+  virtual uint8_t LedSetColor(sentry_led_color_e detected_color,
+                              sentry_led_color_e undetected_color,
+                              uint8_t level = 1);
 
   // Camera functions
   /**
@@ -258,7 +266,7 @@ class SentryFactory {
    * @retval SENTRY_OK  success
    *         other  error
    */
-  uint8_t CameraSetZoom(sentry_camera_zoom_e);
+  virtual uint8_t CameraSetZoom(sentry_camera_zoom_e);
   /**
    * @brief  rotate camera.
    * @param  enable true: rotate camera.
@@ -266,41 +274,41 @@ class SentryFactory {
    * @retval SENTRY_OK  success
    *         other  error
    */
-  uint8_t CameraSetRotate(bool enable);
+  virtual uint8_t CameraSetRotate(bool enable);
   /**
    * @brief  set camera FPS.
    * @param  camera FPS type.
    * @retval SENTRY_OK:  success
    *         other:  error
    */
-  uint8_t CameraSetFPS(sentry_camera_fps_e);
+  virtual uint8_t CameraSetFPS(sentry_camera_fps_e);
   /**
    * @brief  set camera white balance.
    * @param  camera white balance type.
    * @retval SENTRY_OK  success
    *         other  error
    */
-  uint8_t CameraSetAwb(sentry_camera_white_balance_e);
+  virtual uint8_t CameraSetAwb(sentry_camera_white_balance_e);
   /**
    * @brief  get camera zoom value.
    * @retval camera zoom value
    */
-  sentry_camera_zoom_e CameraGetZoom(void);
+  virtual sentry_camera_zoom_e CameraGetZoom(void);
   /**
    * @brief  get camera AWB type.
    * @retval camera AWB type
    */
-  sentry_camera_white_balance_e CameraGetAwb(void);
+  virtual sentry_camera_white_balance_e CameraGetAwb(void);
   /**
    * @brief  get camera rotate state.
    * @retval camera rotate state
    */
-  bool CameraGetRotate(void);
+  virtual bool CameraGetRotate(void);
   /**
    * @brief  get camera FPS type.
    * @retval camera FPS type
    */
-  sentry_camera_fps_e CameraGetFPS(void);
+  virtual sentry_camera_fps_e CameraGetFPS(void);
 
   // Uart functions
   /**
@@ -309,7 +317,7 @@ class SentryFactory {
    * @retval SENTRY_OK:  success
    *         other:  error
    */
-  uint8_t UartSetBaudrate(sentry_baudrate_e);
+  virtual uint8_t UartSetBaudrate(sentry_baudrate_e);
 
   // Vision functions
   /**
@@ -320,42 +328,44 @@ class SentryFactory {
    * @retval SENTRY_OK:  success
    *         other:  error
    */
-  uint8_t VisionSetStatus(sentry_vision_e vision_type, bool enable);
+  virtual uint8_t VisionSetStatus(int vision_type, bool enable);
   /**
    * @brief  set vision configure to default value.
    * @param  vision_type: vision type
    * @retval SENTRY_OK:  success
    *         other:  error
    */
-  uint8_t VisionSetDefault(sentry_vision_e vision_type);
+  virtual uint8_t VisionSetDefault(int vision_type);
   /**
    * @brief  get vision status.
    * @retval vision status
    */
-  bool VisionGetStatus(sentry_vision_e vision_type);
-  int rows() { return (int)img_h_; }
-  int cols() { return (int)img_w_; }
+  virtual bool VisionGetStatus(int vision_type);
+  virtual int rows() { return (int)img_h_; }
+  virtual int cols() { return (int)img_w_; }
 
   SentryFactory(const SentryFactory&) = delete;
   SentryFactory& operator=(const SentryFactory&) = delete;
 
- private:
+//  private:
   uint8_t SensorInit();
   uint8_t SensorLockReg(bool lock);
   uint8_t SensorStartupCheck();
   uint8_t ProtocolVersionCheck();
   uint8_t GetImageShape();
-  bool malloc_vision_buffer(sentry_vision_e);
-  bool free_vision_buffer(sentry_vision_e);
+  bool malloc_vision_buffer(int);
+  bool free_vision_buffer(int);
 
+  sentry_mode_e mode_ = kUnknownMode;
   const uint8_t device_id_;
   uint8_t address_ = 0;
-  sentry_mode_e mode_ = kUnknownMode;
-  SentryStreamBase* stream_ = nullptr;
-  sentry_vision_state_t* vision_state_[kVisionMaxType - 1] = {nullptr};
-  sentry_qrcode_state_t* qrcode_state_ = nullptr;
   uint16_t img_w_ = 0;
   uint16_t img_h_ = 0;
+  const int vision_max_type_;
+  const int vision_qrcode_type_;
+  SentryStreamBase* stream_ = nullptr;
+  sentry_vision_state_t** vision_state_ = nullptr;
+  sentry_qrcode_state_t* qrcode_state_ = nullptr;
 };
 
-#endif /* SENTRY_H_ */
+#endif /* SENTRY_FACTORY_H_ */

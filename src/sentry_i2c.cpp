@@ -15,7 +15,7 @@ sentry_err_t SentryI2C::Set(const uint8_t reg_address, const uint8_t value) {
   return I2CWrite(reg_address, value);
 }
 
-sentry_err_t SentryI2C::Read(sentry_vision_e vision_type,
+sentry_err_t SentryI2C::Read(int vision_type,
                              sentry_vision_state_t* vision_state) {
   sentry_err_t err;
   uint8_t result_data_tmp[2];
@@ -56,7 +56,7 @@ sentry_err_t SentryI2C::Read(sentry_vision_e vision_type,
   return SENTRY_OK;
 }
 
-sentry_err_t SentryI2C::SetParam(sentry_vision_e vision_type,
+sentry_err_t SentryI2C::SetParam(int vision_type,
                                  sentry_object_t* param, int param_id) {
   sentry_err_t err;
   uint8_t result_data_tmp[2];
@@ -79,11 +79,12 @@ sentry_err_t SentryI2C::SetParam(sentry_vision_e vision_type,
   return SENTRY_OK;
 }
 
-sentry_err_t SentryI2C::ReadQrCode(sentry_qrcode_state_t* qrcode) {
+sentry_err_t SentryI2C::ReadQrCode(int vision_type,
+                                   sentry_qrcode_state_t* qrcode) {
   sentry_err_t err;
   uint8_t result_data_tmp[2];
 
-  err = I2CWrite(kRegVisionId, kVisionQrCode);
+  err = I2CWrite(kRegVisionId, vision_type);
   if (err) return err;
   err = I2CRead(kRegFrameCount, &qrcode->frame);
   if (err) return err;

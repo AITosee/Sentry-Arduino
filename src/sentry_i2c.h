@@ -28,11 +28,12 @@ class SentryI2C : public SentryStreamBase, HwSentryI2C {
   virtual sentry_err_t Get(const uint8_t reg_address, uint8_t* value) override;
   virtual sentry_err_t Set(const uint8_t reg_address,
                            const uint8_t value) override;
-  virtual sentry_err_t SetParam(sentry_vision_e vision_type,
+  virtual sentry_err_t SetParam(int vision_type,
                                 sentry_object_t* param, int param_id) override;
-  virtual sentry_err_t Read(sentry_vision_e vision_type,
+  virtual sentry_err_t Read(int vision_type,
                             sentry_vision_state_t* vision_state) override;
-  virtual sentry_err_t ReadQrCode(sentry_qrcode_state_t* qrcode) override;
+  virtual sentry_err_t ReadQrCode(int vision_type,
+                                  sentry_qrcode_state_t* qrcode) override;
 
  private:
  protected:

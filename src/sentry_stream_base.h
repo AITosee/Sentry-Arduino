@@ -27,12 +27,13 @@ class SentryStreamBase {
 
   virtual sentry_err_t Get(const uint8_t reg_address, uint8_t* value) = 0;
   virtual sentry_err_t Set(const uint8_t reg_address, const uint8_t value) = 0;
-  virtual sentry_err_t SetParam(sentry_vision_e vision_type,
+  virtual sentry_err_t SetParam(int vision_type,
                                 sentry_object_t* param,
                                 int param_id) = 0;
-  virtual sentry_err_t Read(sentry_vision_e vision_type,
+  virtual sentry_err_t Read(int vision_type,
                             sentry_vision_state_t* vision_state) = 0;
-  virtual sentry_err_t ReadQrCode(sentry_qrcode_state_t* qrcode) = 0;
+  virtual sentry_err_t ReadQrCode(int vision_type,
+                                  sentry_qrcode_state_t* qrcode) = 0;
 
  private:
  protected:

@@ -2,9 +2,11 @@
 #include <Sentry.h>
 #include <Wire.h>
 
+typedef Sentry2 Sentry;
+
 // #define SENTRY_I2C
 #define SENTRY_UART
-#define VISION_MASK kVisionBlob
+#define VISION_MASK Sentry::kVisionBlob
 
 const char* blob_classes[] = {
   "UNKNOWN", "BLACK", "WHITE", "RED", "GREEN", "BLUE", "YELLOW"
@@ -40,7 +42,7 @@ void setup() {
   param.width = 5;
   param.height = 5;
   /* Set blob color */
-  param.label = SENTRY_COLOR_RED;
+  param.label = Sentry::kColorRed;
   err = sentry.SetParam(VISION_MASK, &param);
   printf("sentry.SetParam(%s): %s[0x%x]\n", blob_classes[param.label], err ? "Error" : "Success", err);
   err = sentry.VisionBegin(VISION_MASK);

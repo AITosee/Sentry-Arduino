@@ -2,16 +2,23 @@
 
 #include "sentry_type.h"
 
-SentryFactory::SentryFactory(uint32_t address, uint8_t device_id)
-    : address_(address), device_id_(device_id) {}
+SentryFactory::SentryFactory(uint32_t address, uint8_t device_id,
+                             sentry_vision_state_t **vision_state,
+                             const int vision_max_type,
+                             const int vision_qrcode_type)
+    : address_(address),
+      device_id_(device_id),
+      vision_max_type_(vision_max_type),
+      vision_qrcode_type_(vision_qrcode_type),
+      vision_state_(vision_state) {}
 
 SentryFactory::~SentryFactory() {
   if (stream_) {
     stream_ = nullptr;
     delete stream_;
   }
-  for (int i = 1; i < kVisionMaxType; i++) {
-    free_vision_buffer(sentry_vision_e(i));
+  for (int i = 1; i < vision_max_type_; i++) {
+    free_vision_buffer(int(i));
   }
 }
 
@@ -46,7 +53,7 @@ uint8_t SentryFactory::ProtocolVersionCheck() {
     //   firmware version,\n"
     //          "it may cause");
     // }
-    if (!err && device_id == SENTRY_DEVICE_ID) break;
+    if (!err && device_id == device_id_) break;
   }
   return err;
 }
@@ -120,32 +127,54 @@ uint8_t SentryFactory::begin(HwSentryI2C::hw_i2c_t *communication_port) {
 }
 
 // Advance interface
-uint8_t SentryFactory::VisionBegin(sentry_vision_e vision_type) {
+uint8_t SentryFactory::VisionBegin(int vision_type) {
   sentry_err_t err;
+  uint8_t max_num;
+
+  /* Set Max Result */
+  max_num = GetParamNum(vision_type);
+  if (0 > max_num) {
+    return SENTRY_FAIL;
+  } else if (SENTRY_MAX_RESULT < max_num || 0 == max_num) {
+    err = SetParamNum(vision_type, SENTRY_MAX_RESULT);
+  }
   err = VisionSetStatus(vision_type, true);
   if (err) return err;
+
   return SENTRY_OK;
 }
 
-uint8_t SentryFactory::VisionEnd(sentry_vision_e vision_type) {
+uint8_t SentryFactory::VisionEnd(int vision_type) {
   return VisionSetStatus(vision_type, false);
 }
 
-int SentryFactory::GetValue(sentry_vision_e vision_type, sentry_obj_info_e obj_info,
-                     int obj_id) {
+int SentryFactory::GetValue(int vision_type, sentry_obj_info_e obj_info,
+                            int obj_id) {
   if (obj_info == kStatus) {
     while (UpdateResult(vision_type))
       ;
   }
 
-  if (kVisionQrCode == vision_type) {
+  if (vision_qrcode_type_ == vision_type) {
     return (int)readQrCode(obj_info);
   } else {
     return (int)read(vision_type, obj_info, obj_id);
   }
 }
 
-uint8_t SentryFactory::SetParamNum(sentry_vision_e vision_type, int max_num) {
+int SentryFactory::GetParamNum(int vision_type) {
+  sentry_err_t err;
+  uint8_t max_num;
+
+  err = stream_->Set(kRegVisionId, vision_type);
+  if (err) return -1;
+  err = stream_->Get(kRegParamNum, &max_num);
+  if (err) return -1;
+
+  return (int)max_num;
+}
+
+uint8_t SentryFactory::SetParamNum(int vision_type, int max_num) {
   sentry_err_t err;
 
   max_num = max_num > SENTRY_MAX_RESULT ? SENTRY_MAX_RESULT : max_num;
@@ -157,11 +186,11 @@ uint8_t SentryFactory::SetParamNum(sentry_vision_e vision_type, int max_num) {
   return err;
 }
 
-sentry_vision_state_t *SentryFactory::GetVisionState(sentry_vision_e vision_type) {
+sentry_vision_state_t *SentryFactory::GetVisionState(int vision_type) {
   return vision_state_[vision_type - 1];
 }
 
-uint8_t SentryFactory::VisionSetStatus(sentry_vision_e vision_type, bool enable) {
+uint8_t SentryFactory::VisionSetStatus(int vision_type, bool enable) {
   sentry_err_t err;
   sentry_vision_conf1_t vision_config1;
 
@@ -185,7 +214,7 @@ uint8_t SentryFactory::VisionSetStatus(sentry_vision_e vision_type, bool enable)
   return SENTRY_OK;
 }
 
-uint8_t SentryFactory::VisionSetDefault(sentry_vision_e vision_type) {
+uint8_t SentryFactory::VisionSetDefault(int vision_type) {
   sentry_err_t err;
   sentry_vision_conf1_t vision_config1;
 
@@ -206,7 +235,7 @@ uint8_t SentryFactory::VisionSetDefault(sentry_vision_e vision_type) {
   return SENTRY_OK;
 }
 
-bool SentryFactory::VisionGetStatus(sentry_vision_e vision_type) {
+bool SentryFactory::VisionGetStatus(int vision_type) {
   uint8_t vision_status1 = 0;
 
   stream_->Get(kRegVisionConfig1, &vision_status1);
@@ -214,7 +243,7 @@ bool SentryFactory::VisionGetStatus(sentry_vision_e vision_type) {
   return (0x01 << vision_type) & vision_status1;
 }
 
-uint8_t SentryFactory::UpdateResult(sentry_vision_e vision_type) {
+uint8_t SentryFactory::UpdateResult(int vision_type) {
   sentry_err_t err;
   uint8_t frame;
 
@@ -222,11 +251,11 @@ uint8_t SentryFactory::UpdateResult(sentry_vision_e vision_type) {
   while(SENTRY_OK != SensorLockReg(false));
   err = stream_->Get(kRegFrameCount, &frame);
   if (err) return SENTRY_FAIL;
-  if (kVisionQrCode == vision_type && qrcode_state_) {
+  if (vision_qrcode_type_ == vision_type && qrcode_state_) {
     if (frame != qrcode_state_->frame) {
       sentry_qrcode_state_t qrcode_state;
       while(SENTRY_OK != SensorLockReg(true));
-      err = stream_->ReadQrCode(&qrcode_state);
+      err = stream_->ReadQrCode(vision_qrcode_type_, &qrcode_state);
       while(SENTRY_OK != SensorLockReg(false));
       if (err) return err;
       memcpy(qrcode_state_, &qrcode_state, sizeof(sentry_qrcode_state_t));
@@ -255,36 +284,36 @@ uint8_t SentryFactory::UpdateResult(sentry_vision_e vision_type) {
   return SENTRY_OK;
 }
 
-uint8_t SentryFactory::read(sentry_vision_e vision_type,
-                            sentry_obj_info_e obj_info, uint8_t obj_id) {
-  uint8_t vision_pointer = vision_type - 1;
+uint8_t SentryFactory::read(int vision_type, sentry_obj_info_e obj_info,
+                            uint8_t obj_id) {
+  uint8_t vision_idx = vision_type - 1;
 
   obj_id = obj_id > SENTRY_MAX_RESULT ? SENTRY_MAX_RESULT : obj_id;
-  if (!vision_state_[vision_pointer] || vision_pointer >= kVisionMaxType)
+  if (!vision_state_[vision_idx] || vision_idx >= vision_max_type_)
     return 0;
   switch (obj_info) {
     case kStatus:
-      return vision_state_[vision_pointer]->detect;
+      return vision_state_[vision_idx]->detect;
     case kXValue:
-      return vision_state_[vision_pointer]->vision_result[obj_id].x_value *
+      return vision_state_[vision_idx]->vision_result[obj_id].x_value *
              100 / img_w_;
     case kYValue:
-      return vision_state_[vision_pointer]->vision_result[obj_id].y_value *
+      return vision_state_[vision_idx]->vision_result[obj_id].y_value *
              100 / img_h_;
     case kWidthValue:
-      return vision_state_[vision_pointer]->vision_result[obj_id].width * 100 /
+      return vision_state_[vision_idx]->vision_result[obj_id].width * 100 /
              img_w_;
     case kHeightValue:
-      return vision_state_[vision_pointer]->vision_result[obj_id].height * 100 /
+      return vision_state_[vision_idx]->vision_result[obj_id].height * 100 /
              img_h_;
     case kLabel:
-      return vision_state_[vision_pointer]->vision_result[obj_id].label;
+      return vision_state_[vision_idx]->vision_result[obj_id].label;
     case kGValue:
-      return vision_state_[vision_pointer]->vision_result[obj_id].color_g_value;
+      return vision_state_[vision_idx]->vision_result[obj_id].color_g_value;
     case kRValue:
-      return vision_state_[vision_pointer]->vision_result[obj_id].color_r_value;
+      return vision_state_[vision_idx]->vision_result[obj_id].color_r_value;
     case kBValue:
-      return vision_state_[vision_pointer]->vision_result[obj_id].color_b_value;
+      return vision_state_[vision_idx]->vision_result[obj_id].color_b_value;
     default:
       return 0;
   }
@@ -352,73 +381,40 @@ uint8_t SentryFactory::SensorLockReg(bool lock) {
 }
 
 // LED functions
-uint8_t SentryFactory::LedSetMode(sentry_led_e led, bool manual, bool hold) {
+uint8_t SentryFactory::LedSetMode(bool manual) {
   sentry_led_conf_t led_config;
-  sentry_reg_e address;
   sentry_err_t err;
-  switch (led) {
-    case kLed1:
-      address = kRegLed1;
-      break;
-    case kLed2:
-      address = kRegLed2;
-      break;
-    case kLedAll:
-      err = this->LedSetMode(kLed1, manual, hold);
-      if (err) return err;
-      err = this->LedSetMode(kLed2, manual, hold);
-      return err;
-    default:
-      return SENTRY_UNSUPPORT_PARAM;
-  }
-  err = stream_->Get(address, &led_config.led_reg_value);
+
+  err = stream_->Get(kRegLedConfig, &led_config.led_reg_value);
   if (err) return err;
-  if (led_config.manual != manual || led_config.hold != hold) {
+  if (led_config.manual != manual) {
     led_config.manual = manual;
-    led_config.hold = hold;
-    err = stream_->Set(address, led_config.led_reg_value);
+    err = stream_->Set(kRegLedConfig, led_config.led_reg_value);
     if (err) return err;
   }
 
   return err;
 }
 
-uint8_t SentryFactory::LedSetColor(sentry_led_e led, sentry_led_color_e detected_color,
-                            sentry_led_color_e undetected_color,
-                            uint8_t level) {
+uint8_t SentryFactory::LedSetColor(sentry_led_color_e detected_color,
+                                   sentry_led_color_e undetected_color,
+                                   uint8_t level) {
   sentry_led_conf_t led_config;
-  sentry_reg_e address;
   sentry_err_t err;
   uint8_t led_level;
-  // set LED brightness level
-  stream_->Get(kRegLedLevel, &led_level);
-  switch (led) {
-    case kLed1:
-      address = kRegLed1;
-      led_level = (led_level & 0xF0) | (level & 0x0F);
-      stream_->Set(kRegLedLevel, led_level);
-      break;
-    case kLed2:
-      address = kRegLed2;
-      led_level = (led_level & 0x0F) | ((level & 0x0F) << 4);
-      stream_->Set(kRegLedLevel, led_level);
-      break;
-    case kLedAll:
-      err = this->LedSetColor(kLed1, detected_color, undetected_color, level);
-      if (err) return err;
-      err = this->LedSetColor(kLed2, detected_color, undetected_color, level);
-      return err;
-    default:
-      return SENTRY_UNSUPPORT_PARAM;
-  }
-  // set LED color
-  err = stream_->Get(address, &led_config.led_reg_value);
+  /* Set LED brightness level */
+  err = stream_->Get(kRegLedLevel, &led_level);
+  if (err) return err;
+  err = stream_->Set(kRegLedLevel, (led_level & 0xF0) | (level & 0x0F));
+  if (err) return err;
+  /* Set LED color */
+  err = stream_->Get(kRegLedConfig, &led_config.led_reg_value);
   if (err) return err;
   if (led_config.detected_color != detected_color ||
       led_config.undetected_color != undetected_color) {
     led_config.detected_color = detected_color;
     led_config.undetected_color = undetected_color;
-    err = stream_->Set(address, led_config.led_reg_value);
+    err = stream_->Set(kRegLedConfig, led_config.led_reg_value);
     if (err) return err;
   }
 
@@ -516,9 +512,9 @@ uint8_t SentryFactory::UartSetBaudrate(sentry_baudrate_e baud) {
   return err;
 }
 
-bool SentryFactory::malloc_vision_buffer(sentry_vision_e vision_type) {
-  if (vision_type && vision_type < kVisionMaxType) {
-    if (kVisionQrCode == vision_type && nullptr == qrcode_state_) {
+bool SentryFactory::malloc_vision_buffer(int vision_type) {
+  if (vision_type && vision_type < vision_max_type_) {
+    if (vision_qrcode_type_ == vision_type && nullptr == qrcode_state_) {
       qrcode_state_ = new sentry_qrcode_state_t;
       return qrcode_state_;
     } else if (vision_state_[vision_type - 1] == nullptr) {
@@ -529,9 +525,9 @@ bool SentryFactory::malloc_vision_buffer(sentry_vision_e vision_type) {
   return false;
 }
 
-bool SentryFactory::free_vision_buffer(sentry_vision_e vision_type) {
-  if (vision_type && vision_type < kVisionMaxType) {
-    if (kVisionQrCode == vision_type && nullptr == qrcode_state_) {
+bool SentryFactory::free_vision_buffer(int vision_type) {
+  if (vision_type && vision_type < vision_max_type_) {
+    if (vision_qrcode_type_ == vision_type && nullptr == qrcode_state_) {
       delete qrcode_state_;
       qrcode_state_ = nullptr;
     } else if (vision_state_[vision_type - 1]) {

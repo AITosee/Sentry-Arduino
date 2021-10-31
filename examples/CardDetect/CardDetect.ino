@@ -2,9 +2,11 @@
 #include <Sentry.h>
 #include <Wire.h>
 
+typedef Sentry2 Sentry;
+
 // #define SENTRY_I2C
 #define SENTRY_UART
-#define VISION_MASK kVisionCard
+#define VISION_MASK Sentry::kVisionCard
 
 const char* card_classes[] = {
   "unknown",

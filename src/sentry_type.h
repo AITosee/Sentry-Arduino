@@ -47,20 +47,20 @@ typedef unsigned char sentry_err_t;
 #define SENTRY_UNSUPPORT_PARAM            0x10
 #define SENTRY_UNKNOWN_PROTOCOL           0x11
 
-typedef enum {
-  kVisionColor            = 1,
-  kVisionBlob             = 2,
-  kVisionAprilTag         = 3,
-  kVisionLine             = 4,
-  kVisionBody             = 5,
-  kVisionCard             = 6,
-  kVisionFace             = 7,
-  kVision20Classes        = 8,
-  kVisionQrCode           = 9,
-  kVisionObjTrack         = 10,
-  kVisionMotionDetect     = 11,
-  kVisionMaxType          ,
-} sentry_vision_e;
+// typedef enum {
+//   kVisionColor            = 1,
+//   kVisionBlob             = 2,
+//   kVisionAprilTag         = 3,
+//   kVisionLine             = 4,
+//   kVisionBody             = 5,
+//   kVisionCard             = 6,
+//   kVisionFace             = 7,
+//   kVision20Classes        = 8,
+//   kVisionQrCode           = 9,
+//   kVisionObjTrack         = 10,
+//   kVisionMotionDetect     = 11,
+//   kVisionMaxType          ,
+// } sentry_vision_e;
 typedef enum {
   kLedClose           = 0,
   kLedRed             = 1,
@@ -78,8 +78,7 @@ typedef enum {
   kRegRestart         = 0x03,
   kRegSensorConfig1   = 0x04,
   kRegLock            = 0x05,
-  kRegLed1            = 0x06,
-  kRegLed2            = 0x07,
+  kRegLedConfig       = 0x06,
   kRegLedLevel        = 0x08,
   kRegUart            = 0x09,
   kRegUSBCongig       = 0x0B,
@@ -200,7 +199,7 @@ typedef union {
   struct {
     unsigned char manual:1;
     sentry_led_color_e detected_color:3;
-    unsigned char hold:1;
+    unsigned char reserved:1;
     sentry_led_color_e undetected_color:3;
   };
   unsigned char led_reg_value;
@@ -259,7 +258,7 @@ typedef struct {
   uint16_t width;
   uint16_t height;
   uint16_t length;
-  char str[20 + 1];
+  char str[34 + 1];
 } sentry_qrcode_t;
 
 typedef struct {

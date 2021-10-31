@@ -3,9 +3,26 @@
 
 #include "SimpleList.h"
 #include <stdint.h>
+#include "../hardware/hw_conf.h"
 
+#ifdef SENTRY_MAX_RESULT
+/* QRCode = (cmd + frame + version_id + start_id + stop_id + (x,y,w,h,num_code) * sizeof(uint16) + ALIGN_UP(num_code * sizeof(uint16), 10)) + protocol_size */
+#define SENTRY_QRCODE_BUFFER_MAX_SIZE ((5 + 10 + 34 * 2 + 2) + 6)
+/* Object = (cmd + frame + version_id + start_id + stop_id + max_result * ((x,y,w,h,l) * sizeof(uint16))) + protocol_size */
+#define SENTRY_OBJECT_BUFFER_MAX_SIZE ((5 + SENTRY_MAX_RESULT * 10) + 6)
+#if SENTRY_QRCODE_BUFFER_MAX_SIZE > SENTRY_OBJECT_BUFFER_MAX_SIZE
+#define PROTOCOL_SINGLE_BUFFER_SIZE SENTRY_QRCODE_BUFFER_MAX_SIZE
+#else
+#define PROTOCOL_SINGLE_BUFFER_SIZE SENTRY_OBJECT_BUFFER_MAX_SIZE
+#endif /* SENTRY_OBJECT_BUFFER_MAX_SIZE ((5 + SENTRY_MAX_RESULT * 10) + 6) */
+#else
 #define PROTOCOL_SINGLE_BUFFER_SIZE 256
-#define PROTOCOL_BUFFER_DEEP        1
+#endif /* SENTRY_MAX_RESULT */
+#if PROTOCOL_SINGLE_BUFFER_SIZE > 256
+#undef PROTOCOL_SINGLE_BUFFER_SIZE
+#define PROTOCOL_SINGLE_BUFFER_SIZE 256
+#endif /* PROTOCOL_SINGLE_BUFFER_SIZE > 256 */
+#define PROTOCOL_BUFFER_DEEP 1
 
 /* Protocol Error Type */
 #define SENTRY_PROTOC_OK                    0xE0

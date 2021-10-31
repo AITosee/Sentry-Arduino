@@ -11,27 +11,7 @@ class PtotocolAnalysis {
   PtotocolAnalysis(const PtotocolAnalysis&) = delete;
   PtotocolAnalysis& operator=(const PtotocolAnalysis &) = delete;
 
-  static void portListShow(void) {
-printf("port_list_:0x%x\n",(size_t)&port_list_);
-printf("  ├─size:%u\n",port_list_.size());
-    port_node_t* port_node = port_list_.front();
-    while (port_node) {
-printf("  └─port_node:0x%x\n", (size_t)port_node);
-printf("  │ ├─port_addr:0x%x\n", port_node->element_.port_addr);
-printf("  │ └─device_list:0x%x\n", (size_t)&port_node->element_.device_list);
-printf("  │   ├─size:%u\n",port_node->element_.device_list.size());
-      device_node_t* dev_node = port_node->element_.device_list.front();
-      while (dev_node) {
-printf("  │   └─dev_node:0x%x\n", (size_t)dev_node);
-printf("  │   │ ├─port_addr:0x%x\n", dev_node->element_.dev_addr);
-printf("  │   │ └─data_q:0x%x\n", (size_t)&dev_node->element_.data_q);
-printf("  │   │   ├─size:%u\n  │   │   └─", dev_node->element_.data_q.size());
-        dev_node->element_.data_q.showMessage();
-        dev_node = dev_node->next_;
-      }
-      port_node = port_node->next_;
-    }
-  }
+  void portListShow(void);
 
   virtual uint8_t receive() = 0;
   virtual uint8_t transmit(const pkg_t& pkg) = 0;

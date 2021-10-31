@@ -49,29 +49,32 @@ sentry_err_t SentryUart::Set(const uint8_t reg_address, const uint8_t value) {
   if (err) return err;
   uint8_t try_time = 0;
   for (;;) {
+    try_time++;
+    if (try_time > 3) {
+      return SENTRY_READ_TIMEOUT;
+    }
     err = receive();
     if (err) {
       return err;
     }
     if (size()) {
       pkg_t& ret_val = popPackage();
-      if (ret_val.buf[0] == SENTRY_PROTOC_OK &&
-          ret_val.buf[1] == SENTRY_PROTOC_COMMADN_SET &&
-          ret_val.buf[2] == reg_address) {
-        return SENTRY_OK;
-      } else {
-        return ret_val.buf[0];
+      if (ret_val.buf[1] != SENTRY_PROTOC_COMMADN_SET ||
+          ret_val.buf[2] != reg_address) {
+        /* Not the return of CMD SET! */
+        continue;
       }
-    }
-    try_time++;
-    if (try_time > 3) {
-      return SENTRY_READ_TIMEOUT;
+      if (SENTRY_PROTOC_OK == ret_val.buf[0])
+      {
+        return SENTRY_OK;
+      }
+      return ret_val.buf[0];
     }
   }
   return SENTRY_OK;
 }
 
-sentry_err_t SentryUart::SetParam(sentry_vision_e vision_type,
+sentry_err_t SentryUart::SetParam(int vision_type,
                                   sentry_object_t* param, int param_id) {
   sentry_err_t err = SENTRY_OK;
   int try_time = 0;
@@ -102,12 +105,7 @@ sentry_err_t SentryUart::SetParam(sentry_vision_e vision_type,
       pkg_t& ret_val = popPackage();
       if (ret_val.buf[0] == SENTRY_PROTOC_OK) {
         if (ret_val.buf[1] == SENTRY_PROTOC_SET_PARAM) {
-          // FIXME: which is right?
-          // if (ret_val.buf[2] == vision_type) {
-            return SENTRY_OK;
-          // } else {
-          //   return SENTRY_FAIL;
-          // }
+          return SENTRY_OK;
         } else {
           return SENTRY_UNSUPPORT_PARAM;
         }
@@ -123,11 +121,11 @@ sentry_err_t SentryUart::SetParam(sentry_vision_e vision_type,
   return err;
 }
 
-sentry_err_t SentryUart::Read(sentry_vision_e vision_type,
+sentry_err_t SentryUart::Read(int vision_type,
                               sentry_vision_state_t* vision_state) {
   int try_time = 0;
   sentry_err_t err = SENTRY_OK;
-  pkg_t pkg = {4, {SENTRY_PROTOC_GET_RESULT, vision_type, 0, 0}};
+  pkg_t pkg = {4, {SENTRY_PROTOC_GET_RESULT, (uint8_t)vision_type, 1, SENTRY_MAX_RESULT}};
   vision_state->detect = 0;
   err = transmit(pkg);
   if (err) return err;
@@ -179,10 +177,11 @@ sentry_err_t SentryUart::Read(sentry_vision_e vision_type,
   return SENTRY_OK;
 }
 
-sentry_err_t SentryUart::ReadQrCode(sentry_qrcode_state_t* qrcode) {
+sentry_err_t SentryUart::ReadQrCode(int vision_type,
+                                    sentry_qrcode_state_t* qrcode) {
   int try_time = 0;
   sentry_err_t err = SENTRY_OK;
-  pkg_t pkg = {4, {SENTRY_PROTOC_GET_RESULT, kVisionQrCode, 0, 0}};
+  pkg_t pkg = {4, {SENTRY_PROTOC_GET_RESULT, (uint8_t)vision_type, 0, 0}};
   qrcode->detect = 0;
   err = transmit(pkg);
   if (err) return err;
@@ -192,7 +191,7 @@ sentry_err_t SentryUart::ReadQrCode(sentry_qrcode_state_t* qrcode) {
     if (size()) {
       pkg_t& ret_val = popPackage();
       if (ret_val.buf[0] == SENTRY_PROTOC_OK ||
-          ret_val.buf[3] == kVisionQrCode) {
+          ret_val.buf[3] == vision_type) {
         if (ret_val.buf[1] == SENTRY_PROTOC_GET_RESULT) {
           qrcode->frame = ret_val.buf[2];
           qrcode->detect = 0;
