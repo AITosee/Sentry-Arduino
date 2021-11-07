@@ -151,6 +151,11 @@ uint8_t SentryFactory::VisionEnd(int vision_type) {
 int SentryFactory::GetValue(int vision_type, sentry_obj_info_e obj_info,
                             int obj_id) {
   if (obj_info == kStatus) {
+    if ((vision_qrcode_type_ == vision_type && qrcode_state_ == NULL) ||
+        vision_state_[vision_type - 1] == NULL) {
+      /* Vison not enable */
+      return SENTRY_FAIL;
+    }
     while (UpdateResult(vision_type))
       ;
   }
@@ -381,27 +386,14 @@ uint8_t SentryFactory::SensorLockReg(bool lock) {
 }
 
 // LED functions
-uint8_t SentryFactory::LedSetMode(bool manual) {
-  sentry_led_conf_t led_config;
-  sentry_err_t err;
-
-  err = stream_->Get(kRegLedConfig, &led_config.led_reg_value);
-  if (err) return err;
-  if (led_config.manual != manual) {
-    led_config.manual = manual;
-    err = stream_->Set(kRegLedConfig, led_config.led_reg_value);
-    if (err) return err;
-  }
-
-  return err;
-}
-
 uint8_t SentryFactory::LedSetColor(sentry_led_color_e detected_color,
                                    sentry_led_color_e undetected_color,
                                    uint8_t level) {
   sentry_led_conf_t led_config;
   sentry_err_t err;
   uint8_t led_level;
+  uint8_t manual;
+
   /* Set LED brightness level */
   err = stream_->Get(kRegLedLevel, &led_level);
   if (err) return err;
@@ -410,10 +402,17 @@ uint8_t SentryFactory::LedSetColor(sentry_led_color_e detected_color,
   /* Set LED color */
   err = stream_->Get(kRegLedConfig, &led_config.led_reg_value);
   if (err) return err;
+  if (detected_color == undetected_color) {
+    manual = 1;
+  } else {
+    manual = 0;
+  }
   if (led_config.detected_color != detected_color ||
-      led_config.undetected_color != undetected_color) {
+      led_config.undetected_color != undetected_color ||
+      led_config.manual != manual) {
     led_config.detected_color = detected_color;
     led_config.undetected_color = undetected_color;
+    led_config.manual = manual;
     err = stream_->Set(kRegLedConfig, led_config.led_reg_value);
     if (err) return err;
   }

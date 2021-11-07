@@ -19,96 +19,6 @@
 #include "sentry_stream_base.h"
 #include "sentry_uart.h"
 
-// /* SentryFactory label */
-// #define SENTRY_UNKNOWN_LABEL 0U
-// /* SentryFactory card label */
-// #define SENTRY_CARD_FORWARD 1U
-// #define SENTRY_CARD_LEFT 2U
-// #define SENTRY_CARD_RIGHT 3U
-// #define SENTRY_CARD_TURN_AROUND 4U
-// #define SENTRY_CARD_PARK 5U
-// #define SENTRY_CARD_GREEN_LIGHT 6U
-// #define SENTRY_CARD_RED_LIGHT 7U
-// #define SENTRY_CARD_SPEED_40 8U
-// #define SENTRY_CARD_SPEED_60 9U
-// #define SENTRY_CARD_SPEED_80 10U
-// #define SENTRY_CARD_CHECK 11U
-// #define SENTRY_CARD_CROSS 12U
-// #define SENTRY_CARD_CIRCLE 13U
-// #define SENTRY_CARD_SQUARE 14U
-// #define SENTRY_CARD_TRIANGLE 15U
-// #define SENTRY_CARD_PLUS 16U
-// #define SENTRY_CARD_MINUS 17U
-// #define SENTRY_CARD_DIVIDE 18U
-// #define SENTRY_CARD_EQUAL 19U
-// #define SENTRY_CARD_ZERO 20U
-// #define SENTRY_CARD_ONE 21U
-// #define SENTRY_CARD_TWO 22U
-// #define SENTRY_CARD_THREE 23U
-// #define SENTRY_CARD_FOUR 24U
-// #define SENTRY_CARD_FIVE 25U
-// #define SENTRY_CARD_SIX 26U
-// #define SENTRY_CARD_SEVEN 27U
-// #define SENTRY_CARD_EIGHT 28U
-// #define SENTRY_CARD_NINE 29U
-// #define SENTRY_CARD_A 31U
-// #define SENTRY_CARD_B 32U
-// #define SENTRY_CARD_C 33U
-// #define SENTRY_CARD_D 34U
-// #define SENTRY_CARD_E 35U
-// #define SENTRY_CARD_F 36U
-// #define SENTRY_CARD_G 37U
-// #define SENTRY_CARD_H 38U
-// #define SENTRY_CARD_I 39U
-// #define SENTRY_CARD_J 40U
-// #define SENTRY_CARD_K 41U
-// #define SENTRY_CARD_L 42U
-// #define SENTRY_CARD_M 43U
-// #define SENTRY_CARD_N 44U
-// #define SENTRY_CARD_O 45U
-// #define SENTRY_CARD_P 46U
-// #define SENTRY_CARD_Q 47U
-// #define SENTRY_CARD_R 48U
-// #define SENTRY_CARD_S 49U
-// #define SENTRY_CARD_T 50U
-// #define SENTRY_CARD_U 51U
-// #define SENTRY_CARD_V 52U
-// #define SENTRY_CARD_W 53U
-// #define SENTRY_CARD_X 54U
-// #define SENTRY_CARD_Y 55U
-// #define SENTRY_CARD_Z 56U
-// /* SentryFactory 20 classes label */
-// #define SENTRY_OBJ_AIRPLANE 1U
-// #define SENTRY_OBJ_BICYCLE 2U
-// #define SENTRY_OBJ_BIRD 3U
-// #define SENTRY_OBJ_BOAT 4U
-// #define SENTRY_OBJ_BOTTLE 5U
-// #define SENTRY_OBJ_BUS 6U
-// #define SENTRY_OBJ_CAR 7U
-// #define SENTRY_OBJ_CAT 8U
-// #define SENTRY_OBJ_CHAIR 9U
-// #define SENTRY_OBJ_COW 10U
-// #define SENTRY_OBJ_TABLE 11U
-// #define SENTRY_OBJ_DOG 12U
-// #define SENTRY_OBJ_HORSE 13U
-// #define SENTRY_OBJ_MOTOR_BIKE 14U
-// #define SENTRY_OBJ_PERSON 15U
-// #define SENTRY_OBJ_PLANT 16U
-// #define SENTRY_OBJ_SHEEP 17U
-// #define SENTRY_OBJ_SOFA 18U
-// #define SENTRY_OBJ_TRAIN 19U
-// #define SENTRY_OBJ_MONITOR 20U
-// /* SentryFactory color label */
-// #define SENTRY_COLOR_BLACK 1U
-// #define SENTRY_COLOR_WHITE 2U
-// #define SENTRY_COLOR_RED 3U
-// #define SENTRY_COLOR_GREEN 4U
-// #define SENTRY_COLOR_BLUE 5U
-// #define SENTRY_COLOR_YELLOW 6U
-// /* SentryFactory ball type */
-// // #define SENTRY_BALL_TABLE_TENNIS 0x01U
-// // #define SENTRY_BALL_TENNIS 0x02U
-
 class SentryFactory {
  public:
   /**
@@ -241,14 +151,7 @@ class SentryFactory {
 
   // LED functions
   /**
-   * @brief  set led.
-   * @param  manual manual mode.
-   * @retval SENTRY_OK  success
-   *         other  error
-   */
-  virtual uint8_t LedSetMode(bool manual);
-  /**
-   * @brief  set led color.
+   * @brief  Set led color, if detected_color == undetected_color, LED will always on.
    * @param  detected_color led color while sensor detected target.
    * @param  undetected_color led color while sensor undetected target.
    * @param  level  led brightness, form 0(close) to 15
