@@ -250,7 +250,7 @@ class SentryFactory {
   SentryFactory(const SentryFactory&) = delete;
   SentryFactory& operator=(const SentryFactory&) = delete;
 
-//  private:
+ protected:
   uint8_t SensorInit();
   uint8_t SensorLockReg(bool lock);
   uint8_t SensorStartupCheck();

@@ -33,7 +33,7 @@ class Sentry2 : public SentryFactory {
     kVisionBlob = 2,
     kVisionAprilTag = 3,
     kVisionLine = 4,
-    kVisionBody = 5,
+    kVisionLearning = 5,
     kVisionCard = 6,
     kVisionFace = 7,
     kVision20Classes = 8,
