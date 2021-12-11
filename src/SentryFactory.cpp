@@ -152,9 +152,9 @@ int SentryFactory::GetValue(int vision_type, sentry_obj_info_e obj_info,
                             int obj_id) {
   if (obj_info == kStatus) {
     if ((vision_qrcode_type_ == vision_type && qrcode_state_ == NULL) ||
-        vision_state_[vision_type - 1] == NULL) {
+        (vision_qrcode_type_ != vision_type && vision_state_[vision_type - 1] == NULL)) {
       /* Vison not enable */
-      return SENTRY_FAIL;
+      return 0;
     }
     while (UpdateResult(vision_type))
       ;
@@ -300,17 +300,13 @@ uint8_t SentryFactory::read(int vision_type, sentry_obj_info_e obj_info,
     case kStatus:
       return vision_state_[vision_idx]->detect;
     case kXValue:
-      return vision_state_[vision_idx]->vision_result[obj_id].x_value *
-             100 / img_w_;
+      return vision_state_[vision_idx]->vision_result[obj_id].x_value;
     case kYValue:
-      return vision_state_[vision_idx]->vision_result[obj_id].y_value *
-             100 / img_h_;
+      return vision_state_[vision_idx]->vision_result[obj_id].y_value;
     case kWidthValue:
-      return vision_state_[vision_idx]->vision_result[obj_id].width * 100 /
-             img_w_;
+      return vision_state_[vision_idx]->vision_result[obj_id].width;
     case kHeightValue:
-      return vision_state_[vision_idx]->vision_result[obj_id].height * 100 /
-             img_h_;
+      return vision_state_[vision_idx]->vision_result[obj_id].height;
     case kLabel:
       return vision_state_[vision_idx]->vision_result[obj_id].label;
     case kGValue:
@@ -432,27 +428,27 @@ uint8_t SentryFactory::CameraSetZoom(sentry_camera_zoom_e zoom) {
   return err;
 }
 
-uint8_t SentryFactory::CameraSetRotate(bool enable) {
-  sentry_camera_conf1_t camera_config1;
-  sentry_err_t err;
-  err = stream_->Get(kRegCameraConfig1, &camera_config1.camera_reg_value);
-  if (camera_config1.rotate != enable) {
-    camera_config1.rotate = enable;
-    err = stream_->Set(kRegCameraConfig1, camera_config1.camera_reg_value);
-  }
-  return err;
-}
+// uint8_t SentryFactory::CameraSetRotate(bool enable) {
+//   sentry_camera_conf1_t camera_config1;
+//   sentry_err_t err;
+//   err = stream_->Get(kRegCameraConfig1, &camera_config1.camera_reg_value);
+//   if (camera_config1.rotate != enable) {
+//     camera_config1.rotate = enable;
+//     err = stream_->Set(kRegCameraConfig1, camera_config1.camera_reg_value);
+//   }
+//   return err;
+// }
 
-uint8_t SentryFactory::CameraSetFPS(sentry_camera_fps_e fps) {
-  sentry_camera_conf1_t camera_config1;
-  sentry_err_t err;
-  err = stream_->Get(kRegCameraConfig1, &camera_config1.camera_reg_value);
-  if (camera_config1.fps != fps) {
-    camera_config1.fps = fps;
-    err = stream_->Set(kRegCameraConfig1, camera_config1.camera_reg_value);
-  }
-  return err;
-}
+// uint8_t SentryFactory::CameraSetFPS(sentry_camera_fps_e fps) {
+//   sentry_camera_conf1_t camera_config1;
+//   sentry_err_t err;
+//   err = stream_->Get(kRegCameraConfig1, &camera_config1.camera_reg_value);
+//   if (camera_config1.fps != fps) {
+//     camera_config1.fps = fps;
+//     err = stream_->Set(kRegCameraConfig1, camera_config1.camera_reg_value);
+//   }
+//   return err;
+// }
 
 uint8_t SentryFactory::CameraSetAwb(sentry_camera_white_balance_e awb) {
   sentry_camera_conf1_t camera_config1;
