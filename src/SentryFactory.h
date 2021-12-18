@@ -148,6 +148,13 @@ class SentryFactory {
   virtual uint8_t SensorSetRestart(void);
   //!< @brief  set all register to default value(include baud rate)
   virtual uint8_t SensorSetDefault(void);
+  /**
+   * @brief  Set result coordinate type.
+   * @param  type coordinate type.
+   * @retval SENTRY_OK  success
+   *         other  error
+   */
+  virtual uint8_t SeneorSetCoordinateType(sentry_coordinate_type_e type);
 
   // LED functions
   /**

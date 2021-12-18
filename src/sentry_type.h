@@ -179,6 +179,10 @@ typedef enum {
   kYellowLight            = 3,    //!< yellow light mode
   kWhiteBalanceCalibrating,
 } sentry_camera_white_balance_e;
+typedef enum {
+  kAbsoluteCoordinate = 0,
+  kRelativeCoordinate = 1,
+} sentry_coordinate_type_e;
 /* register type */
 typedef union {
   struct {
@@ -220,6 +224,15 @@ typedef union {
   };
   unsigned char vision_config_reg_value;
 } sentry_vision_conf1_t;
+
+typedef union {
+  struct {
+    unsigned char output_mode :2;
+    unsigned char coordinate :2;
+    unsigned char protocol :2;
+  };
+  unsigned char value;
+} sentry_hw_conf_t;
 
 typedef struct {
   union {

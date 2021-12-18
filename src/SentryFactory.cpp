@@ -325,13 +325,13 @@ uint8_t SentryFactory::readQrCode(sentry_obj_info_e obj_info) {
     case kStatus:
       return qrcode_state_->detect;
     case kXValue:
-      return qrcode_state_->qrcode_result[0].x_value * 100 / img_w_;
+      return qrcode_state_->qrcode_result[0].x_value;
     case kYValue:
-      return qrcode_state_->qrcode_result[0].y_value * 100 / img_h_;
+      return qrcode_state_->qrcode_result[0].y_value;
     case kWidthValue:
-      return qrcode_state_->qrcode_result[0].width * 100 / img_w_;
+      return qrcode_state_->qrcode_result[0].width;
     case kHeightValue:
-      return qrcode_state_->qrcode_result[0].height * 100 / img_h_;
+      return qrcode_state_->qrcode_result[0].height;
     case kLabel:
     case kGValue:
     case kRValue:
@@ -363,6 +363,20 @@ uint8_t SentryFactory::SensorSetDefault(void) {
                        &sensor_config1.sensor_config_reg_value);
     if (err) return err;
   }
+  return err;
+}
+
+uint8_t SentryFactory::SeneorSetCoordinateType(sentry_coordinate_type_e type) {
+  sentry_hw_conf_t reg;
+  sentry_err_t err;
+
+  err = stream_->Get(kRegHWConfig, &reg.value);
+  if (err) return err;
+  if (type != reg.coordinate ) {
+    reg.coordinate = type;
+    err = stream_->Set(kRegHWConfig, reg.value);
+  }
+
   return err;
 }
 
