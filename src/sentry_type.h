@@ -181,7 +181,7 @@ typedef enum {
 } sentry_camera_white_balance_e;
 typedef enum {
   kAbsoluteCoordinate = 0,
-  kRelativeCoordinate = 1,
+  kPercentageCoordinate = 1,
 } sentry_coordinate_type_e;
 /* register type */
 typedef union {
