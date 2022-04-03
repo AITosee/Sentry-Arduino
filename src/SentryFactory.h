@@ -147,7 +147,7 @@ class SentryFactory {
   //!< @brief  restart Sentry
   virtual uint8_t SensorSetRestart(void);
   //!< @brief  set all register to default value(include baud rate)
-  virtual uint8_t SensorSetDefault(void);
+  virtual uint8_t SensorSetDefault(bool vision_default_only = true);
   /**
    * @brief  Set result coordinate type.
    * @param  type coordinate type.
@@ -229,6 +229,96 @@ class SentryFactory {
    */
   virtual uint8_t UartSetBaudrate(sentry_baudrate_e);
 
+  /**
+   * @brief Take a snapshot from camera/screen to SD card/UART/USB/WIFI.
+   * @param send2sd Send snapshot to SD card
+   * @param send2uart Send snapshot to UART
+   * @param send2usb Send snapshot to USB
+   * @param send2wifi Send snapshot to WiFi
+   * @param shot_from_screen true: take a snapshot from screen
+   *                         false: take a snapshot from camera
+   * @param image_type Snapshot save image format
+   * @retval SENTRY_OK:  success
+   *         other:  error
+   */
+  virtual uint8_t Snapshot(
+      bool send2sd = true, bool send2uart = false, bool send2usb = false,
+      bool send2wifi = false, bool shot_from_screen = false,
+      sentry_snapshot_image_e image_type = kSnapshotImageJPEG);
+
+  // WiFi functions
+  /**
+   * @brief WiFi config.
+   * @param enable Enable WiFi
+   * @param baudrate WiFi baudrate
+   * @retval SENTRY_OK:  success
+   *         other:  error
+   */
+  virtual uint8_t WiFiConfig(
+      bool enable,
+      sentry_baudrate_e baudrate = static_cast<sentry_baudrate_e>(-1));
+  /**
+   * @brief WiFi message send to UART port.
+   * @param enable Send to UART or not
+   * @retval SENTRY_OK:  success
+   *         other:  error
+   */
+  virtual uint8_t WiFiSend2Uart(bool enable);
+  /**
+   * @brief WiFi message send to UART port.
+   * @param enable Send to USB or not
+   * @retval SENTRY_OK:  success
+   *         other:  error
+   */
+  virtual uint8_t WiFiSend2Usb(bool enable);
+
+  // Screen functions
+  /**
+   * @brief User image coordinate config.
+   * @param image_id Image ID, 1~8
+   * @param x_value X value
+   * @param y_value Y value
+   * @param width Image width
+   * @param height Image height
+   * @retval SENTRY_OK:  success
+   *         other:  error
+   */
+  virtual uint8_t UserImageCoordinateConfig(uint8_t image_id, uint16_t x_value,
+                                            uint16_t y_value, uint16_t width,
+                                            uint16_t height);
+  /**
+   * @brief Screen config
+   * @param enable Enable/Disable screen
+   * @param only_user_image Only display user image and don't display image from camera
+   * @retval SENTRY_OK:  success
+   *         other:  error
+   */
+  virtual uint8_t ScreenConfig(bool enable, bool only_user_image = false);
+  /**
+   * @brief Show user image(from SD card) on screen.
+   * @param image_id Image ID
+   * @retval SENTRY_OK:  success
+   *         other:  error
+   */
+  virtual uint8_t ScreenShow(uint8_t image_id);
+  /**
+   * @brief Show user image(from flash) on screen.
+   * @param image_id Image ID
+   * @retval SENTRY_OK:  success
+   *         other:  error
+   */
+  virtual uint8_t ScreenShowFromFlash(uint8_t image_id);
+  /**
+   * @brief Fill the screen with colored(RGB) block.
+   * @param image_id Image ID
+   * @param r Red channel value
+   * @param g Green channel value
+   * @param b Blue channel value
+   * @retval SENTRY_OK:  success
+   *         other:  error
+   */
+  virtual uint8_t ScreenFill(uint8_t image_id, uint8_t r, uint8_t g, uint8_t b);
+
   // Vision functions
   /**
    * @brief  set vision status.
@@ -255,6 +345,7 @@ class SentryFactory {
   virtual int cols() { return (int)img_w_; }
 
   SentryFactory(const SentryFactory&) = delete;
+  SentryFactory(SentryFactory&&) = delete;
   SentryFactory& operator=(const SentryFactory&) = delete;
 
  protected:

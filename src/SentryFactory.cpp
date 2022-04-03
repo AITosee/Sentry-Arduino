@@ -349,20 +349,33 @@ uint8_t SentryFactory::SensorSetRestart(void) {
   return err;
 }
 
-uint8_t SentryFactory::SensorSetDefault(void) {
+uint8_t SentryFactory::SensorSetDefault(bool vision_default_only) {
   sentry_sensor_conf_t sensor_config1;
   sentry_err_t err;
-  err = stream_->Get(kRegSensorConfig1, &sensor_config1.sensor_config_reg_value);
+
+  err =
+      stream_->Get(kRegSensorConfig1, &sensor_config1.sensor_config_reg_value);
   if (err) return err;
-  // XXX: now, set default only disable all visions
-  // sensor_config1.default_setting = 1;
-  sensor_config1.disable_vison = 1;
-  err = stream_->Set(kRegSensorConfig1, sensor_config1.sensor_config_reg_value);
-  while (sensor_config1.disable_vison) {
-    err = stream_->Get(kRegSensorConfig1,
-                       &sensor_config1.sensor_config_reg_value);
-    if (err) return err;
+  if (vision_default_only) {
+    sensor_config1.disable_vison = 1;
+    err =
+        stream_->Set(kRegSensorConfig1, sensor_config1.sensor_config_reg_value);
+    while (sensor_config1.disable_vison) {
+      err = stream_->Get(kRegSensorConfig1,
+                         &sensor_config1.sensor_config_reg_value);
+      if (err) return err;
+    }
+  } else {
+    sensor_config1.default_setting = 1;
+    err =
+        stream_->Set(kRegSensorConfig1, sensor_config1.sensor_config_reg_value);
+    while (sensor_config1.default_setting) {
+      err = stream_->Get(kRegSensorConfig1,
+                         &sensor_config1.sensor_config_reg_value);
+      if (err) return err;
+    }
   }
+
   return err;
 }
 
@@ -471,16 +484,13 @@ uint8_t SentryFactory::CameraSetAwb(sentry_camera_white_balance_e awb) {
   do {
     err = stream_->Get(kRegCameraConfig1, &camera_config1.camera_reg_value);
   } while (camera_config1.white_balance >= kWhiteBalanceCalibrating);
+  camera_config1.white_balance = awb;
+  err = stream_->Set(kRegCameraConfig1, camera_config1.camera_reg_value);
   if (awb == kLockWhiteBalance) {
-    camera_config1.white_balance = awb;
-    err = stream_->Set(kRegCameraConfig1, camera_config1.camera_reg_value);
     // waiting for lock white balance
     do {
       err = stream_->Get(kRegCameraConfig1, &camera_config1.camera_reg_value);
     } while (camera_config1.white_balance >= kWhiteBalanceCalibrating);
-  } else if (camera_config1.white_balance != awb) {
-    camera_config1.white_balance = awb;
-    err = stream_->Set(kRegCameraConfig1, camera_config1.camera_reg_value);
   }
   return err;
 }
@@ -518,6 +528,155 @@ uint8_t SentryFactory::UartSetBaudrate(sentry_baudrate_e baud) {
     uart_config.baudrate = baud;
     stream_->Set(kRegUart, uart_config.uart_reg_value);
   }
+  return err;
+}
+
+uint8_t SentryFactory::Snapshot(
+    bool send2sd, bool send2uart, bool send2usb,
+    bool send2wifi, bool shot_from_screen,
+    sentry_snapshot_image_e image_type) {
+  sentry_err_t err;
+  sentry_snapshot_conf_t reg;
+
+  reg.send2sd = send2sd;
+  reg.send2uart = send2uart;
+  reg.send2usb = send2usb;
+  reg.send2wifi = send2wifi;
+  reg.source = shot_from_screen;
+  reg.image_type = image_type;
+
+  err = stream_->Set(kRegSnapshot, reg.value);
+
+  return err;
+}
+
+// WiFi functions
+uint8_t SentryFactory::WiFiConfig(bool enable, sentry_baudrate_e baudrate) {
+  sentry_err_t err;
+  sentry_wifi_conf_t reg;
+
+  err = stream_->Get(kRegWiFiConfig, &reg.value);
+  if (err) return err;
+  reg.enable = enable;
+  if (baudrate >= 0) {
+    reg.baudrate = baudrate;
+  }
+  stream_->Set(kRegUart, reg.value);
+
+  return err;
+}
+
+uint8_t SentryFactory::WiFiSend2Uart(bool enable) {
+  sentry_err_t err;
+  sentry_wifi_conf_t reg;
+
+  err = stream_->Get(kRegWiFiConfig, &reg.value);
+  if (err) return err;
+  if (reg.send2uart != enable) {
+    reg.send2uart = enable;
+    stream_->Set(kRegUart, reg.value);
+  }
+
+  return err;
+}
+
+uint8_t SentryFactory::WiFiSend2Usb(bool enable) {
+  sentry_err_t err;
+  sentry_wifi_conf_t reg;
+
+  err = stream_->Get(kRegWiFiConfig, &reg.value);
+  if (err) return err;
+  if (reg.send2usb != enable) {
+    reg.send2usb = enable;
+    stream_->Set(kRegUart, reg.value);
+  }
+
+  return err;
+}
+
+// Screen functions
+uint8_t SentryFactory::UserImageCoordinateConfig(uint8_t image_id,
+                                                 uint16_t x_value,
+                                                 uint16_t y_value,
+                                                 uint16_t width,
+                                                 uint16_t height) {
+  sentry_err_t err;
+
+  err = stream_->Set(kRegImageID, image_id);
+  if (err) return err;
+  err = stream_->Set(kRegImageXL, x_value & 0xFF);
+  if (err) return err;
+  err = stream_->Set(kRegImageXH, (x_value >> 8) & 0xFF);
+  if (err) return err;
+  err = stream_->Set(kRegImageYL, y_value & 0xFF);
+  if (err) return err;
+  err = stream_->Set(kRegImageYH, (y_value >> 8) & 0xFF);
+  if (err) return err;
+  err = stream_->Set(kRegImageWidthL, width & 0xFF);
+  if (err) return err;
+  err = stream_->Set(kRegImageWidthH, (width >> 8) & 0xFF);
+  if (err) return err;
+  err = stream_->Set(kRegImageHeightL, height & 0xFF);
+  if (err) return err;
+  err = stream_->Set(kRegImageHeightH, (height >> 8) & 0xFF);
+
+  return err;
+}
+
+uint8_t SentryFactory::ScreenConfig(bool enable, bool only_user_image) {
+  sentry_err_t err;
+  sentry_screen_conf_t reg;
+
+  reg.enable = enable;
+  reg.only_user_image = only_user_image;
+  err = stream_->Set(kRegScreenConfig, reg.value);
+
+  return err;
+}
+
+uint8_t SentryFactory::ScreenShow(uint8_t image_id) {
+  sentry_err_t err;
+  sentry_image_conf_t reg;
+
+  err = stream_->Set(kRegImageID, image_id);
+  if (err) return err;
+  reg.show = 1;
+  reg.source = 1;
+  err = stream_->Set(kRegImageConfig, reg.value);
+
+  return err;
+}
+
+uint8_t SentryFactory::ScreenShowFromFlash(uint8_t image_id) {
+  sentry_err_t err;
+  sentry_image_conf_t reg;
+
+  err = stream_->Set(kRegImageID, image_id);
+  if (err) return err;
+  reg.show = 1;
+  reg.source = 0;
+  err = stream_->Set(kRegImageConfig, reg.value);
+
+  return err;
+}
+
+uint8_t SentryFactory::ScreenFill(uint8_t image_id, uint8_t r, uint8_t g,
+                                  uint8_t b) {
+  sentry_err_t err;
+  sentry_image_conf_t reg;
+
+  err = stream_->Set(kRegImageID, image_id);
+  if (err) return err;
+  err = stream_->Set(kRegScreenFillR, r);
+  if (err) return err;
+  err = stream_->Set(kRegScreenFillG, g);
+  if (err) return err;
+  err = stream_->Set(kRegScreenFillB, b);
+  if (err) return err;
+  reg.show = 1;
+  reg.source = 2;
+  err = stream_->Set(kRegImageConfig, reg.value);
+
   return err;
 }
 
