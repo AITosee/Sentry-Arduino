@@ -81,13 +81,16 @@ typedef enum {
   kRegLedConfig       = 0x06,
   kRegLedLevel        = 0x08,
   kRegUart            = 0x09,
-  kRegUSBCongig       = 0x0B,
+  kRegUSBConfig       = 0x0B,
+  kRegScreenConfig    = 0x0C,
+  kRegWiFiConfig      = 0x0E,
   kRegHWConfig        = 0x0F,
   kRegCameraConfig1   = 0x10,
   kRegCameraConfig2   = 0x11,
   kRegCameraConfig3   = 0x12,
   kRegCameraConfig4   = 0x13,
   kRegCameraConfig5   = 0x14,
+  kRegSnapshot        = 0x1A,
   kRegFrameWidthH     = 0x1B,
   kRegFrameWidthL     = 0x1C,
   kRegFrameHeightH    = 0x1D,
@@ -125,6 +128,20 @@ typedef enum {
   kRegResultData4L    = 0x87,
   kRegResultData5H    = 0x88,
   kRegResultData5L    = 0x89,
+  kRegImageID         = 0x90,
+  kRegImageConfig     = 0x91,
+  kRegImageAddr       = 0x93,
+  kRegImageXH         = 0x94,
+  kRegImageXL         = 0x95,
+  kRegImageYH         = 0x96,
+  kRegImageYL         = 0x97,
+  kRegImageWidthH     = 0x98,
+  kRegImageWidthL     = 0x99,
+  kRegImageHeightH    = 0x9A,
+  kRegImageHeightL    = 0x9B,
+  kRegScreenFillR     = 0x9C,
+  kRegScreenFillG     = 0x9D,
+  kRegScreenFillB     = 0x9E,
   kRegSn              = 0xD0,
 } sentry_reg_e;
 
@@ -183,13 +200,22 @@ typedef enum {
   kAbsoluteCoordinate = 0,
   kPercentageCoordinate = 1,
 } sentry_coordinate_type_e;
+typedef enum {
+  kSnapshotImageGray = 1,
+  kSnapshotImageRGB565 = 2,
+  kSnapshotImageRGB888 = 3,
+  kSnapshotImageJPEG = 4,
+  kSnapshotImagePNG = 5,
+} sentry_snapshot_image_e;
 /* register type */
 typedef union {
   struct {
-    unsigned char start_up :1;
-    unsigned char auto_save :1;
-    unsigned char default_setting :1;  //!< set 1 reset all config
-    unsigned char disable_vison :1;
+    uint8_t start_up : 1;
+    uint8_t auto_save : 1;
+    uint8_t default_setting : 1;  //!< set 1 reset all config
+    uint8_t disable_vison : 1;
+    uint8_t keep_vision_status : 1;
+    uint8_t reserved : 3;
   };
   unsigned char sensor_config_reg_value;
 } sentry_sensor_conf_t;
@@ -233,6 +259,44 @@ typedef union {
   };
   unsigned char value;
 } sentry_hw_conf_t;
+
+typedef union {
+  struct {
+    uint8_t send2sd : 1;
+    uint8_t send2uart : 1;
+    uint8_t send2usb : 1;
+    uint8_t send2wifi : 1;
+    uint8_t source : 1;
+    sentry_snapshot_image_e image_type : 3;
+  };
+  uint8_t value;
+} sentry_snapshot_conf_t;
+
+typedef union {
+  struct {
+    uint8_t enable : 1;
+    uint8_t baudrate : 3;
+    uint8_t send2uart : 1;
+    uint8_t send2usb : 1;
+  };
+  uint8_t value;
+} sentry_wifi_conf_t;
+
+typedef union {
+  struct {
+    uint8_t enable : 1;
+    uint8_t only_user_image : 1;
+  };
+  uint8_t value;
+} sentry_screen_conf_t;
+
+typedef union {
+  struct {
+    uint8_t show : 1;
+    uint8_t source : 2;
+  };
+  uint8_t value;
+} sentry_image_conf_t;
 
 typedef struct {
   union {
