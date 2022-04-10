@@ -455,28 +455,6 @@ uint8_t SentryFactory::CameraSetZoom(sentry_camera_zoom_e zoom) {
   return err;
 }
 
-// uint8_t SentryFactory::CameraSetRotate(bool enable) {
-//   sentry_camera_conf1_t camera_config1;
-//   sentry_err_t err;
-//   err = stream_->Get(kRegCameraConfig1, &camera_config1.camera_reg_value);
-//   if (camera_config1.rotate != enable) {
-//     camera_config1.rotate = enable;
-//     err = stream_->Set(kRegCameraConfig1, camera_config1.camera_reg_value);
-//   }
-//   return err;
-// }
-
-// uint8_t SentryFactory::CameraSetFPS(sentry_camera_fps_e fps) {
-//   sentry_camera_conf1_t camera_config1;
-//   sentry_err_t err;
-//   err = stream_->Get(kRegCameraConfig1, &camera_config1.camera_reg_value);
-//   if (camera_config1.fps != fps) {
-//     camera_config1.fps = fps;
-//     err = stream_->Set(kRegCameraConfig1, camera_config1.camera_reg_value);
-//   }
-//   return err;
-// }
-
 uint8_t SentryFactory::CameraSetAwb(sentry_camera_white_balance_e awb) {
   sentry_camera_conf1_t camera_config1;
   sentry_err_t err;
@@ -551,17 +529,17 @@ uint8_t SentryFactory::Snapshot(
 }
 
 // WiFi functions
-uint8_t SentryFactory::WiFiConfig(bool enable, sentry_baudrate_e baudrate) {
+uint8_t SentryFactory::WiFiConfig(bool enable, sentry_wifi_baudrate_e baudrate) {
   sentry_err_t err;
   sentry_wifi_conf_t reg;
 
   err = stream_->Get(kRegWiFiConfig, &reg.value);
   if (err) return err;
   reg.enable = enable;
-  if (baudrate >= 0) {
+  if (enable) {
     reg.baudrate = baudrate;
   }
-  stream_->Set(kRegUart, reg.value);
+  stream_->Set(kRegWiFiConfig, reg.value);
 
   return err;
 }
@@ -574,7 +552,7 @@ uint8_t SentryFactory::WiFiSend2Uart(bool enable) {
   if (err) return err;
   if (reg.send2uart != enable) {
     reg.send2uart = enable;
-    stream_->Set(kRegUart, reg.value);
+    err = stream_->Set(kRegWiFiConfig, reg.value);
   }
 
   return err;
@@ -588,7 +566,7 @@ uint8_t SentryFactory::WiFiSend2Usb(bool enable) {
   if (err) return err;
   if (reg.send2usb != enable) {
     reg.send2usb = enable;
-    stream_->Set(kRegUart, reg.value);
+    err = stream_->Set(kRegWiFiConfig, reg.value);
   }
 
   return err;
@@ -640,8 +618,14 @@ uint8_t SentryFactory::ScreenShow(uint8_t image_id) {
 
   err = stream_->Set(kRegImageID, image_id);
   if (err) return err;
+  do {
+    /* Waiting for screen to be ready */
+    err = stream_->Get(kRegImageConfig, &reg.value);
+    if (err) return err;
+  } while (reg.ready);
   reg.show = 1;
   reg.source = 1;
+  reg.ready = 1;
   err = stream_->Set(kRegImageConfig, reg.value);
 
   return err;
@@ -653,8 +637,14 @@ uint8_t SentryFactory::ScreenShowFromFlash(uint8_t image_id) {
 
   err = stream_->Set(kRegImageID, image_id);
   if (err) return err;
+  do {
+    /* Waiting for screen to be ready */
+    err = stream_->Get(kRegImageConfig, &reg.value);
+    if (err) return err;
+  } while (reg.ready);
   reg.show = 1;
   reg.source = 0;
+  reg.ready = 1;
   err = stream_->Set(kRegImageConfig, reg.value);
 
   return err;
@@ -673,8 +663,14 @@ uint8_t SentryFactory::ScreenFill(uint8_t image_id, uint8_t r, uint8_t g,
   if (err) return err;
   err = stream_->Set(kRegScreenFillB, b);
   if (err) return err;
+  do {
+    /* Waiting for screen to be ready */
+    err = stream_->Get(kRegImageConfig, &reg.value);
+    if (err) return err;
+  } while (reg.ready);
   reg.show = 1;
   reg.source = 2;
+  reg.ready = 1;
   err = stream_->Set(kRegImageConfig, reg.value);
 
   return err;
