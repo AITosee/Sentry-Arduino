@@ -177,21 +177,6 @@ class SentryFactory {
    *         other  error
    */
   virtual uint8_t CameraSetZoom(sentry_camera_zoom_e);
-  // /**
-  //  * @brief  rotate camera.
-  //  * @param  enable true: rotate camera.
-  //  *                 false: default
-  //  * @retval SENTRY_OK  success
-  //  *         other  error
-  //  */
-  // virtual uint8_t CameraSetRotate(bool enable);
-  // /**
-  //  * @brief  set camera FPS.
-  //  * @param  camera FPS type.
-  //  * @retval SENTRY_OK:  success
-  //  *         other:  error
-  //  */
-  // virtual uint8_t CameraSetFPS(sentry_camera_fps_e);
   /**
    * @brief  set camera white balance.
    * @param  camera white balance type.
@@ -255,8 +240,7 @@ class SentryFactory {
    *         other:  error
    */
   virtual uint8_t WiFiConfig(
-      bool enable,
-      sentry_baudrate_e baudrate = static_cast<sentry_baudrate_e>(-1));
+      bool enable, sentry_wifi_baudrate_e baudrate = kWiFiBaud1152000);
   /**
    * @brief WiFi message send to UART port.
    * @param enable Send to UART or not

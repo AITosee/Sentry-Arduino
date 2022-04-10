@@ -167,6 +167,16 @@ typedef enum {
   kBaud2000000  = 0x07,
 } sentry_baudrate_e;
 typedef enum {
+  kWiFiBaud9600 = 0x00,
+  kWiFiBaud74880 = 0x01,
+  kWiFiBaud115200 = 0x02,
+  kWiFiBaud921600 = 0x03,
+  kWiFiBaud1152000 = 0x04,
+  kWiFiBaud2000000 = 0x05,
+  kWiFiBaud3000000 = 0x06,
+  kWiFiBaud4000000 = 0x07,
+} sentry_wifi_baudrate_e;
+typedef enum {
   kStatus,        //!< whether the target is detected
   kXValue,        //!< target horizontal position
   kYValue,        //!< target vertical position
@@ -294,6 +304,9 @@ typedef union {
   struct {
     uint8_t show : 1;
     uint8_t source : 2;
+    uint8_t reserved : 1;
+    uint8_t ready : 1;
+    uint8_t auto_reload : 1;
   };
   uint8_t value;
 } sentry_image_conf_t;
