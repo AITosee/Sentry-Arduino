@@ -17,6 +17,8 @@
 
 #include <SentryFactory.h>
 
+namespace tosee_sentry {
+
 #define SENTRY2_DEVICE_ID 0x04
 
 class Sentry2 : public SentryFactory {
@@ -205,5 +207,7 @@ class Sentry2 : public SentryFactory {
  private:
   sentry_vision_state_t* product_vision_state_[kVisionMaxType - 1] = {nullptr};
 };
+
+}  // namespace tosee_sentry
 
 #endif /* SENTRY2_H_ */

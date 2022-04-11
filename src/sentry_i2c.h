@@ -18,6 +18,8 @@
 #include "sentry_stream_base.h"
 #include "hardware/hw_sentry_i2c.h"
 
+namespace tosee_sentry {
+
 class SentryI2C : public SentryStreamBase, HwSentryI2C {
  public:
   SentryI2C(HwSentryI2C::hw_i2c_t* i2c_port, uint32_t address);
@@ -39,5 +41,7 @@ class SentryI2C : public SentryStreamBase, HwSentryI2C {
  private:
  protected:
 };
+
+}  // namespace tosee_sentry
 
 #endif /* SENTRY_I2C_H_ */

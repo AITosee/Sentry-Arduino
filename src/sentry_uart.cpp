@@ -2,6 +2,8 @@
 
 #include "debug/debug_tool.h"
 
+namespace tosee_sentry {
+
 SentryUart::SentryUart(HwSentryUart::hw_uart_t hw_port, uint32_t address)
     : SentryStreamBase(),
       SentryPtotocolAnalysis<HwSentryUart, HwSentryUart::hw_uart_t>(hw_port,
@@ -265,3 +267,5 @@ sentry_err_t SentryUart::Write(int vision_type,
 
   return err;
 }
+
+}  // namespace tosee_sentry

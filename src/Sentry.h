@@ -17,4 +17,6 @@
 
 #include "Sentry2.h"
 
+using namespace tosee_sentry;
+
 #endif /* SENTRY_H_ */

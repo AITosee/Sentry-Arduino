@@ -19,6 +19,8 @@
 #include "sentry_stream_base.h"
 #include "sentry_uart.h"
 
+namespace tosee_sentry {
+
 class SentryFactory {
  public:
   /**
@@ -354,5 +356,7 @@ class SentryFactory {
   sentry_vision_state_t** vision_state_ = nullptr;
   sentry_qrcode_state_t* qrcode_state_ = nullptr;
 };
+
+}  // namespace tosee_sentry
 
 #endif /* SENTRY_FACTORY_H_ */

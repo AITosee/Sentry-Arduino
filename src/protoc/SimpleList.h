@@ -14,6 +14,8 @@
 #include <stdio.h>
 #include <string.h>
 
+namespace tosee_sentry {
+
 /*
  * @brief Node for class SimpleList.
  * @see SimpleList
@@ -328,5 +330,7 @@ class SimpleQueue : public SimpleList<node_t<element_t>> {
 //    cout<<"hello world";
 //    return 0;
 //}
+
+}  // namespace tosee_sentry
 
 #endif

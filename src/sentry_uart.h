@@ -19,6 +19,8 @@
 #include "protoc/sentry_protocol_analysis.h"
 #include "sentry_stream_base.h"
 
+namespace tosee_sentry {
+
 class SentryUart
     : public SentryStreamBase,
       SentryPtotocolAnalysis<HwSentryUart, HwSentryUart::hw_uart_t> {
@@ -42,5 +44,7 @@ class SentryUart
  private:
  protected:
 };
+
+}  // namespace tosee_sentry
 
 #endif /* SENTRY_UART_H_ */

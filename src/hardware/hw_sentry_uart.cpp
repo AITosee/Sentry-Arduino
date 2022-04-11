@@ -1,6 +1,8 @@
 #include "debug/debug_tool.h"
 #include "hw_sentry_uart.h"
 
+namespace tosee_sentry {
+
 HwSentryUart::HwSentryUart(hw_uart_t hw_port)
     : hw_port_(hw_port) {
 }
@@ -31,3 +33,4 @@ size_t HwSentryUart::write(uint8_t* buf, size_t length) {
   return hw_port_->write(buf, length);
 }
 
+}  // namespace tosee_sentry

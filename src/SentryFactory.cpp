@@ -2,6 +2,8 @@
 
 #include "sentry_type.h"
 
+namespace tosee_sentry {
+
 SentryFactory::SentryFactory(uint32_t address, uint8_t device_id,
                              sentry_vision_state_t **vision_state,
                              const int vision_max_type,
@@ -717,3 +719,5 @@ bool SentryFactory::free_vision_buffer(int vision_type) {
   }
   return true;
 }
+
+}  // namespace tosee_sentry

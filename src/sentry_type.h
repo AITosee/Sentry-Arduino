@@ -15,13 +15,11 @@
 #ifndef SENTRY_TYPE_H_
 #define SENTRY_TYPE_H_
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include <stdint.h>
 
 #include "hardware/hw_conf.h"
+
+namespace tosee_sentry {
 
 typedef unsigned char sentry_err_t;
 
@@ -349,8 +347,6 @@ typedef struct {
   sentry_qrcode_t qrcode_result[1];
 } sentry_qrcode_state_t;
 
-#ifdef __cplusplus
-}
-#endif
+}  // namespace tosee_sentry
 
 #endif /* SENTRY_TYPE_H_ */

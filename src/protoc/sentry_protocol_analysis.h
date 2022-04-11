@@ -4,6 +4,8 @@
 #include "protocol_analysis.h"
 #include "sentry_type.h"
 
+namespace tosee_sentry {
+
 // Protocol
 #define SENTRY_PROTOC_START 0xFF
 #define SENTRY_PROTOC_END 0xED
@@ -118,4 +120,7 @@ uint8_t SentryPtotocolAnalysis<STREAM, HW_T>::check(uint8_t* buf, size_t size) {
   }
   return (uint8_t)(sum & 0xFF);
 }
+
+}  // namespace tosee_sentry
+
 #endif /* SENTRY_PROTOCOL_ANALYSIS_H_ */
