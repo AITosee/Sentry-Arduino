@@ -60,7 +60,7 @@ void loop() {
   tn = millis();
   if (obj_num) {
     printf("Totally %d objects in %lums:\n", obj_num, tn - ts);
-    for (int i = 0; i < obj_num; ++i) {
+    for (int i = 1; i <= obj_num; ++i) {
       int l = sentry.GetValue(VISION_MASK, kLabel, i);
       printf("|%02d", l);
     }

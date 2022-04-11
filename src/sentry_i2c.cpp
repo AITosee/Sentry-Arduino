@@ -125,3 +125,32 @@ sentry_err_t SentryI2C::ReadQrCode(int vision_type,
 
   return SENTRY_OK;
 }
+
+sentry_err_t SentryI2C::Write(int vision_type,
+                              const sentry_vision_state_t* vision_state) {
+  sentry_err_t err = SENTRY_OK;
+
+  if (vision_state->detect >= SENTRY_MAX_RESULT) {
+    return SENTRY_FAIL;
+  }
+
+  err = I2CWrite(kRegVisionId, vision_type);
+  if (err) return err;
+  err = I2CWrite(kRegResultNumber, vision_state->detect);
+  if (err) return err;
+  for (uint8_t i = 0; i < vision_state->detect; ++i) {
+    I2CWrite(kRegResultId, i + 1);
+    I2CWrite(kRegResultData1L, vision_state->vision_result[i].result_data1 & 0xFF);
+    I2CWrite(kRegResultData1H, (vision_state->vision_result[i].result_data1 >> 8) & 0xFF);
+    I2CWrite(kRegResultData2L, vision_state->vision_result[i].result_data2 & 0xFF);
+    I2CWrite(kRegResultData2H, (vision_state->vision_result[i].result_data2 >> 8) & 0xFF);
+    I2CWrite(kRegResultData3L, vision_state->vision_result[i].result_data3 & 0xFF);
+    I2CWrite(kRegResultData3H, (vision_state->vision_result[i].result_data3 >> 8) & 0xFF);
+    I2CWrite(kRegResultData4L, vision_state->vision_result[i].result_data4 & 0xFF);
+    I2CWrite(kRegResultData4H, (vision_state->vision_result[i].result_data4 >> 8) & 0xFF);
+    I2CWrite(kRegResultData5L, vision_state->vision_result[i].result_data5 & 0xFF);
+    I2CWrite(kRegResultData5H, (vision_state->vision_result[i].result_data5 >> 8) & 0xFF);
+  }
+
+  return err;
+}

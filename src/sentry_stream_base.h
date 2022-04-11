@@ -34,6 +34,8 @@ class SentryStreamBase {
                             sentry_vision_state_t* vision_state) = 0;
   virtual sentry_err_t ReadQrCode(int vision_type,
                                   sentry_qrcode_state_t* qrcode) = 0;
+  virtual sentry_err_t Write(int vision_type,
+                             const sentry_vision_state_t* vision_state) = 0;
 
  private:
  protected:

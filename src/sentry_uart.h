@@ -24,19 +24,20 @@ class SentryUart
       SentryPtotocolAnalysis<HwSentryUart, HwSentryUart::hw_uart_t> {
  public:
   SentryUart(HwSentryUart::hw_uart_t hw_port, uint32_t address);
-  virtual ~SentryUart(void);
+  virtual ~SentryUart();
   SentryUart(const SentryUart&) = delete;
   SentryUart& operator=(const SentryUart&) = delete;
 
-  virtual sentry_err_t Get(const uint8_t reg_address, uint8_t* value) override;
-  virtual sentry_err_t Set(const uint8_t reg_address,
-                           const uint8_t value) override;
-  virtual sentry_err_t SetParam(int vision_type, sentry_object_t* param,
-                                int param_id) override;
-  virtual sentry_err_t Read(int vision_type,
-                            sentry_vision_state_t* vision_state) override;
-  virtual sentry_err_t ReadQrCode(int vision_type,
-                                  sentry_qrcode_state_t* qrcode) override;
+  sentry_err_t Get(const uint8_t reg_address, uint8_t* value) override;
+  sentry_err_t Set(const uint8_t reg_address, const uint8_t value) override;
+  sentry_err_t SetParam(int vision_type, sentry_object_t* param,
+                        int param_id) override;
+  sentry_err_t Read(int vision_type,
+                    sentry_vision_state_t* vision_state) override;
+  sentry_err_t ReadQrCode(int vision_type,
+                          sentry_qrcode_state_t* qrcode) override;
+  sentry_err_t Write(int vision_type,
+                     const sentry_vision_state_t* vision_state) override;
 
  private:
  protected:

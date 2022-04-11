@@ -161,9 +161,9 @@ int SentryFactory::GetValue(int vision_type, sentry_obj_info_e obj_info,
   }
 
   if (vision_qrcode_type_ == vision_type) {
-    return (int)readQrCode(obj_info);
+    return readQrCode(obj_info);
   } else {
-    return (int)read(vision_type, obj_info, obj_id);
+    return read(vision_type, obj_info, obj_id);
   }
 }
 
@@ -191,8 +191,18 @@ uint8_t SentryFactory::SetParamNum(int vision_type, int max_num) {
   return err;
 }
 
-sentry_vision_state_t *SentryFactory::GetVisionState(int vision_type) {
+const sentry_vision_state_t *SentryFactory::GetVisionState(int vision_type) {
   return vision_state_[vision_type - 1];
+}
+
+uint8_t SentryFactory::SetVisionState(int vision_type, sentry_vision_state_t &state) {
+  sentry_err_t err;
+
+  while(SENTRY_OK != SensorLockReg(true));
+  err = stream_->Write(vision_type, &state);
+  while(SENTRY_OK != SensorLockReg(false));
+
+  return err;
 }
 
 uint8_t SentryFactory::VisionSetStatus(int vision_type, bool enable) {
@@ -289,11 +299,14 @@ uint8_t SentryFactory::UpdateResult(int vision_type) {
   return SENTRY_OK;
 }
 
-uint8_t SentryFactory::read(int vision_type, sentry_obj_info_e obj_info,
-                            uint8_t obj_id) {
+int SentryFactory::read(int vision_type, sentry_obj_info_e obj_info,
+                        uint8_t obj_id) {
   uint8_t vision_idx = vision_type - 1;
 
-  obj_id = obj_id > SENTRY_MAX_RESULT ? SENTRY_MAX_RESULT : obj_id;
+  if (obj_id < 1 || obj_id >SENTRY_MAX_RESULT) {
+    return 0;
+  }
+  obj_id -= 1;
   if (!vision_state_[vision_idx] || vision_idx >= vision_max_type_)
     return 0;
   switch (obj_info) {
@@ -320,7 +333,7 @@ uint8_t SentryFactory::read(int vision_type, sentry_obj_info_e obj_info,
   }
 }
 
-uint8_t SentryFactory::readQrCode(sentry_obj_info_e obj_info) {
+int SentryFactory::readQrCode(sentry_obj_info_e obj_info) {
   switch (obj_info) {
     case kStatus:
       return qrcode_state_->detect;
@@ -612,7 +625,7 @@ uint8_t SentryFactory::ScreenConfig(bool enable, bool only_user_image) {
   return err;
 }
 
-uint8_t SentryFactory::ScreenShow(uint8_t image_id) {
+uint8_t SentryFactory::ScreenShow(uint8_t image_id, uint8_t auto_reload) {
   sentry_err_t err;
   sentry_image_conf_t reg;
 
@@ -626,12 +639,13 @@ uint8_t SentryFactory::ScreenShow(uint8_t image_id) {
   reg.show = 1;
   reg.source = 1;
   reg.ready = 1;
+  reg.auto_reload = auto_reload;
   err = stream_->Set(kRegImageConfig, reg.value);
 
   return err;
 }
 
-uint8_t SentryFactory::ScreenShowFromFlash(uint8_t image_id) {
+uint8_t SentryFactory::ScreenShowFromFlash(uint8_t image_id, uint8_t auto_reload) {
   sentry_err_t err;
   sentry_image_conf_t reg;
 
@@ -645,13 +659,14 @@ uint8_t SentryFactory::ScreenShowFromFlash(uint8_t image_id) {
   reg.show = 1;
   reg.source = 0;
   reg.ready = 1;
+  reg.auto_reload = auto_reload;
   err = stream_->Set(kRegImageConfig, reg.value);
 
   return err;
 }
 
 uint8_t SentryFactory::ScreenFill(uint8_t image_id, uint8_t r, uint8_t g,
-                                  uint8_t b) {
+                                  uint8_t b, uint8_t auto_reload) {
   sentry_err_t err;
   sentry_image_conf_t reg;
 
@@ -671,6 +686,7 @@ uint8_t SentryFactory::ScreenFill(uint8_t image_id, uint8_t r, uint8_t g,
   reg.show = 1;
   reg.source = 2;
   reg.ready = 1;
+  reg.auto_reload = auto_reload;
   err = stream_->Set(kRegImageConfig, reg.value);
 
   return err;
