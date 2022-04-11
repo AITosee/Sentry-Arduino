@@ -71,7 +71,7 @@ class SentryFactory {
    * @retval information value
    */
   virtual int GetValue(int vision_type, sentry_obj_info_e obj_info,
-                       int obj_id = 0);
+                       int obj_id = 1);
   virtual char* GetQrCodeValue() {
     if (qrcode_state_) {
       return qrcode_state_->qrcode_result[0].str;
@@ -121,7 +121,8 @@ class SentryFactory {
    * @retval vision result buffer pointer,
    *         return `nullptr` if the vision type is not `begin` or not supported
    */
-  virtual sentry_vision_state_t* GetVisionState(int vision_type);
+  virtual const sentry_vision_state_t* GetVisionState(int vision_type);
+  virtual uint8_t SetVisionState(int vision_type, sentry_vision_state_t& state);
 
   // Advance interface
   /**
@@ -139,9 +140,9 @@ class SentryFactory {
    * @param  obj_info  object information
    * @retval information value
    */
-  virtual uint8_t read(int vision_type, sentry_obj_info_e obj_info,
-                       uint8_t obj_id = 0);
-  virtual uint8_t readQrCode(sentry_obj_info_e obj_info);
+  virtual int read(int vision_type, sentry_obj_info_e obj_info,
+                   uint8_t obj_id = 1);
+  virtual int readQrCode(sentry_obj_info_e obj_info);
 
   // Sensor functions
   //!< @brief  restart Sentry
@@ -284,14 +285,14 @@ class SentryFactory {
    * @retval SENTRY_OK:  success
    *         other:  error
    */
-  virtual uint8_t ScreenShow(uint8_t image_id);
+  virtual uint8_t ScreenShow(uint8_t image_id, uint8_t auto_reload = true);
   /**
    * @brief Show user image(from flash) on screen.
    * @param image_id Image ID
    * @retval SENTRY_OK:  success
    *         other:  error
    */
-  virtual uint8_t ScreenShowFromFlash(uint8_t image_id);
+  virtual uint8_t ScreenShowFromFlash(uint8_t image_id, uint8_t auto_reload = true);
   /**
    * @brief Fill the screen with colored(RGB) block.
    * @param image_id Image ID
@@ -301,7 +302,8 @@ class SentryFactory {
    * @retval SENTRY_OK:  success
    *         other:  error
    */
-  virtual uint8_t ScreenFill(uint8_t image_id, uint8_t r, uint8_t g, uint8_t b);
+  virtual uint8_t ScreenFill(uint8_t image_id, uint8_t r, uint8_t g, uint8_t b,
+                             uint8_t auto_reload = true);
 
   // Vision functions
   /**

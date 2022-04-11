@@ -186,7 +186,7 @@ class Sentry2 : public SentryFactory {
    * @retval information value
    */
   int GetValue(sentry_vision_e vision_type, sentry_obj_info_e obj_info,
-               int obj_id = 0) {
+               int obj_id = 1) {
     return SentryFactory::GetValue((int)vision_type, obj_info, obj_id);
   }
 

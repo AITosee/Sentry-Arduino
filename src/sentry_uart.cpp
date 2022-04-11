@@ -224,3 +224,44 @@ sentry_err_t SentryUart::ReadQrCode(int vision_type,
   }
   return SENTRY_OK;
 }
+
+sentry_err_t SentryUart::Write(int vision_type,
+                               const sentry_vision_state_t* vision_state) {
+  sentry_err_t err = SENTRY_OK;
+  pkg_t pkg;
+
+  for (size_t i = 0; i < vision_state->detect; i++) {
+    pkg.buf[0] = SENTRY_PROTOC_SET_RESULT;
+    pkg.buf[1] = vision_type;
+    pkg.buf[2] = i + 1;
+    pkg.buf[3] = i + 1;
+    pkg.buf[4] = (vision_state->vision_result[i].result_data1 >> 8) & 0xFF;
+    pkg.buf[5] = vision_state->vision_result[i].result_data1 & 0xFF;
+    pkg.buf[6] = (vision_state->vision_result[i].result_data2 >> 8) & 0xFF;
+    pkg.buf[7] = vision_state->vision_result[i].result_data2 & 0xFF;
+    pkg.buf[8] = (vision_state->vision_result[i].result_data3 >> 8) & 0xFF;
+    pkg.buf[9] = vision_state->vision_result[i].result_data3 & 0xFF;
+    pkg.buf[10] = (vision_state->vision_result[i].result_data4 >> 8) & 0xFF;
+    pkg.buf[11] = vision_state->vision_result[i].result_data4 & 0xFF;
+    pkg.buf[12] = (vision_state->vision_result[i].result_data5 >> 8) & 0xFF;
+    pkg.buf[13] = vision_state->vision_result[i].result_data5 & 0xFF;
+    pkg.len = 14;
+    err = transmit(pkg);
+    if (err) return err;
+    err = receive();
+    if (err) return err;
+    /* TODO: 此处未考虑总线设备接收到其他传感器指令的情况，应读取多次 */
+    if (size()) {
+      pkg_t& ret_val = popPackage();
+      if (3 == ret_val.len && SENTRY_PROTOC_OK == ret_val.buf[0] &&
+          SENTRY_PROTOC_SET_RESULT == ret_val.buf[1] &&
+          vision_type == int(ret_val.buf[2])) {
+        return err;
+      } else {
+        return SENTRY_FAIL;
+      }
+    }
+  }
+
+  return err;
+}

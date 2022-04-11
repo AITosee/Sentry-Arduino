@@ -9,9 +9,10 @@
 #define SENTRY_PROTOC_END 0xED
 #define SENTRY_PROTOC_COMMADN_SET 0x01
 #define SENTRY_PROTOC_COMMADN_GET 0x02
+#define SENTRY_PROTOC_MESSAGE 0x11
 #define SENTRY_PROTOC_SET_PARAM 0x21
 #define SENTRY_PROTOC_GET_RESULT 0x23
-#define SENTRY_PROTOC_MESSAGE 0x11
+#define SENTRY_PROTOC_SET_RESULT 0x25
 
 template <class STREAM, class HW_T>
 class SentryPtotocolAnalysis : public PtotocolAnalysis, protected STREAM {

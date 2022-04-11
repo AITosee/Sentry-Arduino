@@ -47,20 +47,6 @@ typedef unsigned char sentry_err_t;
 #define SENTRY_UNSUPPORT_PARAM            0x10
 #define SENTRY_UNKNOWN_PROTOCOL           0x11
 
-// typedef enum {
-//   kVisionColor            = 1,
-//   kVisionBlob             = 2,
-//   kVisionAprilTag         = 3,
-//   kVisionLine             = 4,
-//   kVisionBody             = 5,
-//   kVisionCard             = 6,
-//   kVisionFace             = 7,
-//   kVision20Classes        = 8,
-//   kVisionQrCode           = 9,
-//   kVisionObjTrack         = 10,
-//   kVisionMotionDetect     = 11,
-//   kVisionMaxType          ,
-// } sentry_vision_e;
 typedef enum {
   kLedClose           = 0,
   kLedRed             = 1,
