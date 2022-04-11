@@ -5,6 +5,8 @@
 #include <stdint.h>
 #include "../hardware/hw_conf.h"
 
+namespace tosee_sentry {
+
 #ifdef SENTRY_MAX_RESULT
   /* QRCode = (cmd + frame + version_id + start_id + stop_id + (x,y,w,h,num_code) * sizeof(uint16) + ALIGN_UP(num_code * sizeof(uint16), 10)) + protocol_size */
   #define SENTRY_QRCODE_BUFFER_MAX_SIZE ((5 + 10 + 34 * 2 + 2) + 6)
@@ -60,5 +62,7 @@ struct port_t {
 };
 typedef SimpleNode<port_t> port_node_t;
 typedef SimpleList<port_node_t> port_list_t;
+
+}  // namespace tosee_sentry
 
 #endif /* PROTOCOL_TYPES_H_ */

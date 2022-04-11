@@ -3,6 +3,8 @@
 
 #include <Stream.h>
 
+namespace tosee_sentry {
+
 class HwSentryUart {
  public:
   typedef Stream* hw_uart_t;
@@ -19,5 +21,7 @@ class HwSentryUart {
  protected:
   hw_uart_t hw_port_;
 };
+
+}  // namespace tosee_sentry
 
 #endif /* HW_SENTRY_UART_H_ */

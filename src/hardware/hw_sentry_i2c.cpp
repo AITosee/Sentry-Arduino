@@ -3,6 +3,8 @@
 #include "debug/debug_tool.h"
 #include "sentry_type.h"
 
+namespace tosee_sentry {
+
 HwSentryI2C::HwSentryI2C(hw_i2c_t* i2c_port, uint32_t address)
     : i2c_port_(i2c_port), sentry_address_(address) {
 }
@@ -45,3 +47,5 @@ uint32_t HwSentryI2C::I2CWrite(uint8_t reg_address, uint8_t value) {
 #endif
   return SENTRY_OK;
 }
+
+}  // namespace tosee_sentry

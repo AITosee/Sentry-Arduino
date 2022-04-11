@@ -17,6 +17,8 @@
 
 #include <Wire.h>
 
+namespace tosee_sentry {
+
 // if u want to use software wire in arduino, change include and hw_i2c_t type here
 //#include <SoftwareWire.h>
 //@type define I2C type
@@ -56,5 +58,7 @@ class HwSentryI2C {
 
  protected:
 };
+
+}  // namespace tosee_sentry
 
 #endif /* HW_SENTRY_I2C_H_ */

@@ -1,5 +1,7 @@
 #include "sentry_i2c.h"
 
+namespace tosee_sentry {
+
 SentryI2C::SentryI2C(HwSentryI2C::hw_i2c_t* i2c_port, uint32_t address)
     : SentryStreamBase(), HwSentryI2C(i2c_port, address) {
   SentryStreamBase::sentry_address_ = address;
@@ -154,3 +156,5 @@ sentry_err_t SentryI2C::Write(int vision_type,
 
   return err;
 }
+
+}  // namespace tosee_sentry

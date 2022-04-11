@@ -18,6 +18,8 @@
 #include <stdint.h>
 #include "sentry_type.h"
 
+namespace tosee_sentry {
+
 class SentryStreamBase {
  public:
   SentryStreamBase(void) {}
@@ -41,5 +43,7 @@ class SentryStreamBase {
  protected:
   uint32_t sentry_address_ = 0;
 };
+
+}
 
 #endif /* SENTRY_COMMUNICATION_BASE_H_ */
