@@ -18,20 +18,22 @@ int serial_putc(char c, struct __file*) {
 }
 
 void setup() {
+  sentry_err_t err = SENTRY_OK;
+
   Serial.begin(9600);
   fdevopen(&serial_putc, 0);
-  sentry_err_t err;
 #ifdef SENTRY_I2C
   Wire.begin();
-  err = sentry.begin(&Wire);
+  while (SENTRY_OK != sentry.begin(&Wire)) { yield(); }
 #endif  // SENTRY_I2C
 #ifdef SENTRY_UART
   Serial3.begin(9600);
-  err = sentry.begin(&Serial3);
+  while (SENTRY_OK != sentry.begin(&Serial3)) { yield(); }
 #endif  // SENTRY_UART
   printf("sentry.begin: %s[0x%x]\n", err ? "Error" : "Success", err);
   printf("Sentry image_shape = %hux%hu\n", sentry.cols(), sentry.rows());
   printf("SENTRY_MAX_RESULT = %d\n", SENTRY_MAX_RESULT);
+  sentry.SeneorSetCoordinateType(kAbsoluteCoordinate);
   int param_num = 4;       // 1~SENTRY_MAX_RESULT
   sentry.SetParamNum(VISION_MASK, param_num);
   sentry_object_t param;
