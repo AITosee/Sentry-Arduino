@@ -23,18 +23,9 @@ namespace tosee_sentry {
 
 typedef unsigned char sentry_err_t;
 
-#ifdef BIT
-#undef BIT
-#endif
-#define BIT(x) (0x01<<(x))
-
 #if !defined(SENTRY_MAX_RESULT)
 #define SENTRY_MAX_RESULT                 25
 #endif
-
-#define SENTRY_DEVICE_ID                  0x04
-#define SENTRY_FIRMWARE_VERSION           0xFF
-#define visionTypeEnumToMacro(v)      (BIT(v-1))
 
 /* Sentry error type */
 #define SENTRY_OK                         0x00
@@ -114,7 +105,8 @@ typedef enum {
   kRegResultData5L    = 0x89,
   kRegImageID         = 0x90,
   kRegImageConfig     = 0x91,
-  kRegImageAddr       = 0x93,
+  kRegImageWriteAddr  = 0x92,
+  kRegImageReadAddr   = 0x93,
   kRegImageXH         = 0x94,
   kRegImageXL         = 0x95,
   kRegImageYH         = 0x96,

@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include "debug/debug_tool.h"
 #include "hw_sentry_uart.h"
 

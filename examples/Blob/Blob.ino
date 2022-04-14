@@ -22,21 +22,24 @@ int serial_putc(char c, struct __file*) {
 }
 
 void setup() {
+  sentry_err_t err = SENTRY_OK;
+
   Serial.begin(9600);
   fdevopen(&serial_putc, 0);
 #ifdef SENTRY_I2C
   Wire.begin();
-  sentry_err_t err = sentry.begin(&Wire);
+  while (SENTRY_OK != sentry.begin(&Wire)) { yield(); }
 #endif  // SENTRY_I2C
 #ifdef SENTRY_UART
   Serial3.begin(9600);
-  sentry_err_t err = sentry.begin(&Serial3);
+  while (SENTRY_OK != sentry.begin(&Serial3)) { yield(); }
 #endif  // SENTRY_UART
   printf("sentry.begin: %s[0x%x]\n", err ? "Error" : "Success", err);
   printf("Sentry image_shape = %dx%d\n", sentry.cols(), sentry.rows());
   /* Must lock white balance */
   err = sentry.CameraSetAwb(kLockWhiteBalance);
   printf("sentry.CameraLockAwb: %s[0x%x]\n", err ? "Error" : "Success", err);
+  sentry.SetParamNum(VISION_MASK, 1);
   sentry_object_t param = {0};
   /* Set minimum blob size(pixel) */
   param.width = 5;
