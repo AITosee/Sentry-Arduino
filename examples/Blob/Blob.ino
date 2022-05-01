@@ -7,12 +7,12 @@ typedef Sentry2 Sentry;
 // #define SENTRY_I2C
 #define SENTRY_UART
 #define VISION_MASK Sentry::kVisionBlob
+Sentry sentry;
 
 const char* blob_classes[] = {
   "UNKNOWN", "BLACK", "WHITE", "RED", "GREEN", "BLUE", "YELLOW"
 };
 
-Sentry sentry;
 unsigned long ts = millis();
 unsigned long tn = ts;
 
@@ -26,6 +26,8 @@ void setup() {
 
   Serial.begin(9600);
   fdevopen(&serial_putc, 0);
+
+  printf("Waiting for sentry initialize...\n");
 #ifdef SENTRY_I2C
   Wire.begin();
   while (SENTRY_OK != sentry.begin(&Wire)) { yield(); }
@@ -34,7 +36,7 @@ void setup() {
   Serial3.begin(9600);
   while (SENTRY_OK != sentry.begin(&Serial3)) { yield(); }
 #endif  // SENTRY_UART
-  printf("sentry.begin: %s[0x%x]\n", err ? "Error" : "Success", err);
+  printf("Sentry begin Success.\n");
   printf("Sentry image_shape = %dx%d\n", sentry.cols(), sentry.rows());
   /* Must lock white balance */
   err = sentry.CameraSetAwb(kLockWhiteBalance);

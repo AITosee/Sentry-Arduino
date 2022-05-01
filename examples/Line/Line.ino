@@ -7,8 +7,8 @@ typedef Sentry2 Sentry;
 // #define SENTRY_I2C
 #define SENTRY_UART
 #define VISION_MASK Sentry::kVisionLine
-
 Sentry sentry;
+
 unsigned long ts = millis();
 unsigned long tn = ts;
 
@@ -22,6 +22,8 @@ void setup() {
 
   Serial.begin(9600);
   fdevopen(&serial_putc, 0);
+
+  printf("Waiting for sentry initialize...\n");
 #ifdef SENTRY_I2C
   Wire.begin();
   while (SENTRY_OK != sentry.begin(&Wire)) { yield(); }
@@ -30,7 +32,7 @@ void setup() {
   Serial3.begin(9600);
   while (SENTRY_OK != sentry.begin(&Serial3)) { yield(); }
 #endif  // SENTRY_UART
-  printf("sentry.begin: %s[0x%x]\n", err ? "Error" : "Success", err);
+  printf("Sentry begin Success.\n");
   printf("Sentry image_shape = %dx%d\n", sentry.cols(), sentry.rows());
   err = sentry.VisionBegin(VISION_MASK);
   printf("sentry.VisionBegin(kVisionLine): %s[0x%x]\n", err ? "Error" : "Success", err);
@@ -47,7 +49,9 @@ void loop() {
       int y1 = sentry.GetValue(VISION_MASK, kYValue, i);
       int x2 = sentry.GetValue(VISION_MASK, kWidthValue, i);
       int y2 = sentry.GetValue(VISION_MASK, kHeightValue, i);
-      printf("  obj[%d]: x1=%d,y1=%d,x2=%d,y2=%d\n", i, x1, y1, x2, y2);
+      int degree = sentry.GetValue(VISION_MASK, kLabel, i);
+      printf("  obj[%d]: x1=%d,y1=%d,x2=%d,y2=%d,degree=%d\n", i, x1, y1, x2,
+             y2, degree);
     }
   }
 }

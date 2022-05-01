@@ -2,13 +2,13 @@
 #include <Sentry.h>
 #include <Wire.h>
 
+typedef Sentry2 Sentry;
+
 // #define SENTRY_I2C
 #define SENTRY_UART
 #define VISION_MASK Sentry::kVisionColor
-
-typedef Sentry2 Sentry;
-
 Sentry sentry;
+
 unsigned long ts = millis();
 unsigned long tn = ts;
 
@@ -22,6 +22,8 @@ void setup() {
 
   Serial.begin(9600);
   fdevopen(&serial_putc, 0);
+
+  printf("Waiting for sentry initialize...\n");
 #ifdef SENTRY_I2C
   Wire.begin();
   while (SENTRY_OK != sentry.begin(&Wire)) { yield(); }
@@ -30,7 +32,7 @@ void setup() {
   Serial3.begin(9600);
   while (SENTRY_OK != sentry.begin(&Serial3)) { yield(); }
 #endif  // SENTRY_UART
-  printf("sentry.begin: %s[0x%x]\n", err ? "Error" : "Success", err);
+  printf("Sentry begin Success.\n");
   printf("Sentry image_shape = %hux%hu\n", sentry.cols(), sentry.rows());
   printf("SENTRY_MAX_RESULT = %d\n", SENTRY_MAX_RESULT);
   sentry.SeneorSetCoordinateType(kAbsoluteCoordinate);
