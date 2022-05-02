@@ -40,9 +40,6 @@ void setup() {
 #endif  // SENTRY_UART
   printf("Sentry begin Success.\n");
   printf("Sentry image_shape = %hux%hu\n", sentry.cols(), sentry.rows());
-  /* Enable WiFi, set baudrate to 1152000 */
-  err = sentry.WiFiConfig(true, kWiFiBaud1152000);
-  printf("WiFi enable %s!\n", err ? "Error" : "Success");
   err = sentry.Snapshot(SNAPSHOT_TO_SD_CARD, SNAPSHOT_TO_UART, SNAPSHOT_TO_USB,
                         SNAPSHOT_TO_WIFI, SNAPSHOT_FROM_SCREEN);
   printf("Snapshot %s!\n", err ? "Error" : "Success");
