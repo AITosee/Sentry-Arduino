@@ -1,48 +1,44 @@
+/**
+ * @file ScreenSnapshot.ino
+ * @author donion.yang
+ * @brief 本示例程序用于介绍如何在Sentry2板载的ESP8285-WiFi芯片上获取一张图片,此例程并不适合UNO之类内存较小的开发板
+ * @version 0.1
+ * @date 2022-05-17
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
 #include <Arduino.h>
 #include <Sentry.h>
-#include <Wire.h>
 
-typedef Sentry2 Sentry;
-
-// #define SENTRY_I2C
-#define SENTRY_UART
-Sentry sentry;
-
-#define SNAPSHOT_TO_SD_CARD false
-#define SNAPSHOT_TO_UART false
-#define SNAPSHOT_TO_USB true
-#define SNAPSHOT_TO_WIFI false
-#define SNAPSHOT_FROM_SCREEN false
-
-int serial_putc(char c, struct __file*) {
-  Serial.write(c);
-  return c;
-}
+Sentry2 sentry;
 
 void setup() {
   sentry_err_t err = SENTRY_OK;
 
-  Serial.begin(9600);
-  fdevopen(&serial_putc, 0);
+  Serial.begin(4000000);
+  Serial.printf("Waiting for sentry initialize...\n");
 
-  printf("Waiting for sentry initialize...\n");
-#ifdef SENTRY_I2C
-  Wire.begin();
-  while (SENTRY_OK != sentry.begin(&Wire)) {
+  while (SENTRY_OK != sentry.begin(&Serial)) {
     yield();
   }
-#endif  // SENTRY_I2C
-#ifdef SENTRY_UART
-  Serial3.begin(9600);
-  while (SENTRY_OK != sentry.begin(&Serial3)) {
-    yield();
-  }
-#endif  // SENTRY_UART
   printf("Sentry begin Success.\n");
   printf("Sentry image_shape = %hux%hu\n", sentry.cols(), sentry.rows());
-  err = sentry.Snapshot(SNAPSHOT_TO_SD_CARD, SNAPSHOT_TO_UART, SNAPSHOT_TO_USB,
-                        SNAPSHOT_TO_WIFI, SNAPSHOT_FROM_SCREEN);
-  printf("Snapshot %s!\n", err ? "Error" : "Success");
 }
 
-void loop() { yield(); }
+void loop() {
+  // 
+  err = sentry.Snapshot(kSnapshot2Wifi); // Default is: kSnapshotFromCamera, kSnapshotTypeJPEG
+  // err = sentry.Snapshot(kSnapshot2Wifi, kSnapshotFromCamera, kSnapshotTypeJPEGBase64); // Base64 type
+  
+  sentry_image_frame_t *image;
+  err = sentry.ImageReceive(image);
+
+  Serial.printf("Received an image, type:%d, width:%d, height:%d, size:%d", image->type, image->width, image->height, image->size);
+
+  // TODO: image process
+  
+  err = sentry.ImageDestroy(image);
+
+  delay(10000);
+}

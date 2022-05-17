@@ -524,18 +524,17 @@ uint8_t SentryFactory::UartSetBaudrate(sentry_baudrate_e baud) {
   return err;
 }
 
-uint8_t SentryFactory::Snapshot(
-    bool send2sd, bool send2uart, bool send2usb,
-    bool send2wifi, bool shot_from_screen,
-    sentry_snapshot_image_e image_type) {
+uint8_t SentryFactory::Snapshot(uint8_t image_dest, sentry_snapshot_src_e image_src, 
+    sentry_snapshot_type_e image_type) {
   sentry_err_t err;
   sentry_snapshot_conf_t reg;
-
-  reg.send2sd = send2sd;
-  reg.send2uart = send2uart;
-  reg.send2usb = send2usb;
-  reg.send2wifi = send2wifi;
-  reg.source = shot_from_screen;
+  
+  if (mode_ != kSerialMode) {
+    return SENTRY_FAIL;
+  }
+  reg.value &= 0xF0;
+  reg.value |= image_dest;
+  reg.source = image_src;
   reg.image_type = image_type;
 
   err = stream_->Set(kRegSnapshot, reg.value);
@@ -543,48 +542,12 @@ uint8_t SentryFactory::Snapshot(
   return err;
 }
 
-// WiFi functions
-uint8_t SentryFactory::WiFiConfig(bool enable, sentry_wifi_baudrate_e baudrate) {
-  sentry_err_t err;
-  sentry_wifi_conf_t reg;
-
-  err = stream_->Get(kRegWiFiConfig, &reg.value);
-  if (err) return err;
-  reg.enable = enable;
-  if (enable) {
-    reg.baudrate = baudrate;
-  }
-  stream_->Set(kRegWiFiConfig, reg.value);
-
-  return err;
+uint8_t SentryFactory::ImageReceive(sentry_image_frame_t *image, int timeout) {
+  TODO：图片接收函数，在此函数内new一个数组用于存放图片数据，并将地址导出
 }
 
-uint8_t SentryFactory::WiFiSend2Uart(bool enable) {
-  sentry_err_t err;
-  sentry_wifi_conf_t reg;
-
-  err = stream_->Get(kRegWiFiConfig, &reg.value);
-  if (err) return err;
-  if (reg.send2uart != enable) {
-    reg.send2uart = enable;
-    err = stream_->Set(kRegWiFiConfig, reg.value);
-  }
-
-  return err;
-}
-
-uint8_t SentryFactory::WiFiSend2Usb(bool enable) {
-  sentry_err_t err;
-  sentry_wifi_conf_t reg;
-
-  err = stream_->Get(kRegWiFiConfig, &reg.value);
-  if (err) return err;
-  if (reg.send2usb != enable) {
-    reg.send2usb = enable;
-    err = stream_->Set(kRegWiFiConfig, reg.value);
-  }
-
-  return err;
+uint8_t SentryFactory::ImageDestroy(sentry_image_frame_t *image) {
+  TODO：图片释放函数，在此函数释放所new的数组
 }
 
 // Screen functions

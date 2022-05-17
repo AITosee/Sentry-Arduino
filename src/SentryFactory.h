@@ -218,46 +218,34 @@ class SentryFactory {
   virtual uint8_t UartSetBaudrate(sentry_baudrate_e);
 
   /**
-   * @brief Take a snapshot from camera/screen to SD card/UART/USB/WIFI.
-   * @param send2sd Send snapshot to SD card
-   * @param send2uart Send snapshot to UART
-   * @param send2usb Send snapshot to USB
-   * @param send2wifi Send snapshot to WiFi
-   * @param shot_from_screen true: take a snapshot from screen
-   *                         false: take a snapshot from camera
-   * @param image_type Snapshot save image format
+   * @brief Start to take a snapshot from camera/screen to SD card/UART/USB/WIFI. Receive Image data by ImageReceive functions
+   * @param image_dest Send image to SD or UART or USB or WIFI ports
+   * @param image_src Image capture from camera or screen
+   * @param image_type Snapshot image format
    * @retval SENTRY_OK:  success
    *         other:  error
    */
-  virtual uint8_t Snapshot(
-      bool send2sd = true, bool send2uart = false, bool send2usb = false,
-      bool send2wifi = false, bool shot_from_screen = false,
-      sentry_snapshot_image_e image_type = kSnapshotImageJPEG);
+  virtual uint8_t Snapshot(uint8_t image_dest, sentry_snapshot_src_e image_src = kSnapshotImageSrcCamera, 
+    sentry_snapshot_type_e image_type = kSnapshotImageJPEG);
 
-  // WiFi functions
   /**
-   * @brief WiFi config.
-   * @param enable Enable WiFi
-   * @param baudrate WiFi baudrate
-   * @retval SENTRY_OK:  success
+   * @brief Receive an image frame
+   * 
+   * @param image image handle
+   * @param timeout max wait time in ms, default is 5000ms
+   * @return SENTRY_OK:  success
    *         other:  error
    */
-  virtual uint8_t WiFiConfig(
-      bool enable, sentry_wifi_baudrate_e baudrate = kWiFiBaud1152000);
+  virtual uint8_t SentryFactory::ImageReceive(sentry_image_frame_t *image, int timeout = 5000);
+    
   /**
-   * @brief WiFi message send to UART port.
-   * @param enable Send to UART or not
-   * @retval SENTRY_OK:  success
-   *         other:  error
+   * @brief Destroy the temp buffer of an image
+   * 
+   * @param image image handle
+   * @return SENTRY_OK:  success
+   *         other:  error 
    */
-  virtual uint8_t WiFiSend2Uart(bool enable);
-  /**
-   * @brief WiFi message send to UART port.
-   * @param enable Send to USB or not
-   * @retval SENTRY_OK:  success
-   *         other:  error
-   */
-  virtual uint8_t WiFiSend2Usb(bool enable);
+  virtual uint8_t SentryFactory::ImageDestroy(sentry_image_frame_t *image);
 
   // Screen functions
   /**
