@@ -227,8 +227,8 @@ class SentryFactory {
    *         other:  error
    */
   virtual uint8_t Snapshot(uint8_t image_dest, 
-                           sentry_snapshot_src_e image_src = kSnapshotImageSrcCamera, 
-                           sentry_snapshot_type_e image_type = kSnapshotImageJPEG);
+                           sentry_snapshot_src_e image_src = kSnapshotFromCamera, 
+                           sentry_snapshot_type_e image_type = kSnapshotTypeJPEG);
 
   // Screen functions
   /**
