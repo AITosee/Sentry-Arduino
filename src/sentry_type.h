@@ -202,15 +202,6 @@ typedef enum {
   kSnapshotTypeJPEGBase64 = 5,
 } sentry_snapshot_type_e;
 
-typedef struct {
-  uint8_t start;
-  uint8_t type;
-  uint16_t width;
-  uint16_t height;
-  uint32_t size;
-  uint8_t **buf;
-} sentry_image_frame_t;
-
 /* register type */
 typedef union {
   struct {
@@ -271,7 +262,7 @@ typedef union {
     uint8_t send2usb : 1;
     uint8_t send2wifi : 1;
     uint8_t source : 1;
-    sentry_snapshot_image_e image_type : 3;
+    sentry_snapshot_type_e image_type : 3;
   };
   uint8_t value;
 } sentry_snapshot_conf_t;
