@@ -30,15 +30,7 @@ void loop() {
   // 
   err = sentry.Snapshot(kSnapshot2Wifi); // Default is: kSnapshotFromCamera, kSnapshotTypeJPEG
   // err = sentry.Snapshot(kSnapshot2Wifi, kSnapshotFromCamera, kSnapshotTypeJPEGBase64); // Base64 type
-  
-  sentry_image_frame_t *image;
-  err = sentry.ImageReceive(image);
-
-  Serial.printf("Received an image, type:%d, width:%d, height:%d, size:%d", image->type, image->width, image->height, image->size);
-
-  // TODO: image process
-  
-  err = sentry.ImageDestroy(image);
+  // TODO: receive an image
 
   delay(10000);
 }
