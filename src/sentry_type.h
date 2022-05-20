@@ -187,30 +187,12 @@ typedef enum {
   kPercentageCoordinate = 1,
 } sentry_coordinate_type_e;
 typedef enum {
-  kSnapshot2SD = 1,
-  kSnapshot2Uart = 2,
-  kSnapshot2Usb = 4,
-  kSnapshot2Wifi = 8,
-} sentry_snapshot_dest_e;
-typedef enum {
-  kSnapshotFromCamera = 0,
-  kSnapshotFromScreen = 1,
-} sentry_snapshot_src_e;
-typedef enum {
-  kSnapshotTypeRGB565 = 2,
-  kSnapshotTypeJPEG = 4,
-  kSnapshotTypeJPEGBase64 = 5,
-} sentry_snapshot_type_e;
-
-typedef struct {
-  uint8_t start;
-  uint8_t type;
-  uint16_t width;
-  uint16_t height;
-  uint32_t size;
-  uint8_t **buf;
-} sentry_image_frame_t;
-
+  kSnapshotImageGray = 1,
+  kSnapshotImageRGB565 = 2,
+  kSnapshotImageRGB888 = 3,
+  kSnapshotImageJPEG = 4,
+  kSnapshotImagePNG = 5,
+} sentry_snapshot_image_e;
 /* register type */
 typedef union {
   struct {
