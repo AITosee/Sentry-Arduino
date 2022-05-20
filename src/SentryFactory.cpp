@@ -524,9 +524,8 @@ uint8_t SentryFactory::UartSetBaudrate(sentry_baudrate_e baud) {
   return err;
 }
 
-uint8_t SentryFactory::Snapshot(uint8_t image_dest, 
-                                sentry_snapshot_src_e image_src, 
-                                sentry_snapshot_type_e image_type) {
+uint8_t SentryFactory::Snapshot(uint8_t image_dest, sentry_snapshot_src_e image_src, 
+    sentry_snapshot_type_e image_type) {
   sentry_err_t err;
   sentry_snapshot_conf_t reg;
   
@@ -541,6 +540,14 @@ uint8_t SentryFactory::Snapshot(uint8_t image_dest,
   err = stream_->Set(kRegSnapshot, reg.value);
 
   return err;
+}
+
+uint8_t SentryFactory::ImageReceive(sentry_image_frame_t *image, int timeout) {
+  TODO：图片接收函数，在此函数内new一个数组用于存放图片数据，并将地址导出
+}
+
+uint8_t SentryFactory::ImageDestroy(sentry_image_frame_t *image) {
+  TODO：图片释放函数，在此函数释放所new的数组
 }
 
 // Screen functions
