@@ -218,17 +218,34 @@ class SentryFactory {
   virtual uint8_t UartSetBaudrate(sentry_baudrate_e);
 
   /**
-   * @brief Start to take a snapshot from camera/screen to SD card/UART/USB/WIFI. 
-   *        Receive Image data by ImageReceive functions
+   * @brief Start to take a snapshot from camera/screen to SD card/UART/USB/WIFI. Receive Image data by ImageReceive functions
    * @param image_dest Send image to SD or UART or USB or WIFI ports
    * @param image_src Image capture from camera or screen
    * @param image_type Snapshot image format
    * @retval SENTRY_OK:  success
    *         other:  error
    */
-  virtual uint8_t Snapshot(uint8_t image_dest, 
-                           sentry_snapshot_src_e image_src = kSnapshotImageSrcCamera, 
-                           sentry_snapshot_type_e image_type = kSnapshotImageJPEG);
+  virtual uint8_t Snapshot(uint8_t image_dest, sentry_snapshot_src_e image_src = kSnapshotImageSrcCamera, 
+    sentry_snapshot_type_e image_type = kSnapshotImageJPEG);
+
+  /**
+   * @brief Receive an image frame
+   * 
+   * @param image image handle
+   * @param timeout max wait time in ms, default is 5000ms
+   * @return SENTRY_OK:  success
+   *         other:  error
+   */
+  virtual uint8_t SentryFactory::ImageReceive(sentry_image_frame_t *image, int timeout = 5000);
+    
+  /**
+   * @brief Destroy the temp buffer of an image
+   * 
+   * @param image image handle
+   * @return SENTRY_OK:  success
+   *         other:  error 
+   */
+  virtual uint8_t SentryFactory::ImageDestroy(sentry_image_frame_t *image);
 
   // Screen functions
   /**
