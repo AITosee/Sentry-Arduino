@@ -78,7 +78,7 @@ uint8_t SentryFactory::GetImageShape() {
   return SENTRY_OK;
 }
 
-uint8_t SentryFactory::SensorInit() {
+uint8_t SentryFactory::SensorInit(bool set_default) {
   sentry_err_t err;
 
   /* Check sensor startup*/
@@ -87,9 +87,11 @@ uint8_t SentryFactory::SensorInit() {
   /* Check sentry protocol version */
   err = ProtocolVersionCheck();
   if (err) return err;
-  /* Sensor set default if version is correction. */
-  err = SensorSetDefault();
-  if (err) return err;
+  if (set_default) {
+    /* Sensor set default if version is correction. */
+    err = SensorSetDefault();
+    if (err) return err;
+  }
   /* Get sensor image shape. */
   err = GetImageShape();
   if (err) return err;
@@ -97,7 +99,10 @@ uint8_t SentryFactory::SensorInit() {
   return SENTRY_OK;
 }
 
-uint8_t SentryFactory::begin(HwSentryUart::hw_uart_t communication_port) {
+uint8_t SentryFactory::begin(HwSentryUart::hw_uart_t communication_port,
+                             bool set_default) {
+  sentry_err_t err = SENTRY_OK;
+
   if (mode_ == kSerialMode) {
     return SENTRY_OK;
   }
@@ -106,14 +111,23 @@ uint8_t SentryFactory::begin(HwSentryUart::hw_uart_t communication_port) {
     stream_ = nullptr;
   }
 
-  mode_ = kSerialMode;
   stream_ =
       new SentryUart((HwSentryUart::hw_uart_t)communication_port, address_);
+  err = SensorInit(set_default);
+  if (err) {
+    delete stream_;
+    stream_ = nullptr;
+    return err;
+  }
+  mode_ = kSerialMode;
 
-  return SensorInit();
+  return err;
 }
 
-uint8_t SentryFactory::begin(HwSentryI2C::hw_i2c_t *communication_port) {
+uint8_t SentryFactory::begin(HwSentryI2C::hw_i2c_t *communication_port,
+                             bool set_default) {
+  sentry_err_t err = SENTRY_OK;
+
   if (mode_ == kI2CMode) {
     return SENTRY_OK;
   }
@@ -122,10 +136,16 @@ uint8_t SentryFactory::begin(HwSentryI2C::hw_i2c_t *communication_port) {
     stream_ = nullptr;
   }
 
-  mode_ = kI2CMode;
   stream_ = new SentryI2C(communication_port, address_);
+  err = SensorInit(set_default);
+  if (err) {
+    delete stream_;
+    stream_ = nullptr;
+    return err;
+  }
+  mode_ = kI2CMode;
 
-  return SensorInit();
+  return err;
 }
 
 // Advance interface
@@ -524,12 +544,12 @@ uint8_t SentryFactory::UartSetBaudrate(sentry_baudrate_e baud) {
   return err;
 }
 
-uint8_t SentryFactory::Snapshot(uint8_t image_dest, 
-                                sentry_snapshot_src_e image_src, 
+uint8_t SentryFactory::Snapshot(uint8_t image_dest,
+                                sentry_snapshot_src_e image_src,
                                 sentry_snapshot_type_e image_type) {
   sentry_err_t err;
   sentry_snapshot_conf_t reg;
-  
+
   if (mode_ != kSerialMode) {
     return SENTRY_FAIL;
   }

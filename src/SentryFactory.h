@@ -41,14 +41,16 @@ class SentryFactory {
    * @retval SENTRY_OK: begin success.
    *         other: protocol assert fail.
    */
-  virtual uint8_t begin(HwSentryUart::hw_uart_t communication_port);
+  virtual uint8_t begin(HwSentryUart::hw_uart_t communication_port,
+                        bool set_default = true);
   /**
    * @brief  Sentry begin with I2c.
    * @param  communication_port: i2c port.
    * @retval SENTRY_OK: begin success.
    *         other: protocol assert fail.
    */
-  virtual uint8_t begin(HwSentryI2C::hw_i2c_t* communication_port);
+  virtual uint8_t begin(HwSentryI2C::hw_i2c_t* communication_port,
+                        bool set_default = true);
 
   // Based interface
   /**
@@ -218,7 +220,7 @@ class SentryFactory {
   virtual uint8_t UartSetBaudrate(sentry_baudrate_e);
 
   /**
-   * @brief Start to take a snapshot from camera/screen to SD card/UART/USB/WIFI. 
+   * @brief Start to take a snapshot from camera/screen to SD card/UART/USB/WIFI.
    *        Receive Image data by ImageReceive functions
    * @param image_dest Send image to SD or UART or USB or WIFI ports
    * @param image_src Image capture from camera or screen
@@ -226,8 +228,8 @@ class SentryFactory {
    * @retval SENTRY_OK:  success
    *         other:  error
    */
-  virtual uint8_t Snapshot(uint8_t image_dest, 
-                           sentry_snapshot_src_e image_src = kSnapshotFromCamera, 
+  virtual uint8_t Snapshot(uint8_t image_dest,
+                           sentry_snapshot_src_e image_src = kSnapshotFromCamera,
                            sentry_snapshot_type_e image_type = kSnapshotTypeJPEG);
 
   // Screen functions
@@ -308,7 +310,7 @@ class SentryFactory {
   SentryFactory& operator=(const SentryFactory&) = delete;
 
  protected:
-  uint8_t SensorInit();
+  uint8_t SensorInit(bool set_default = true);
   uint8_t SensorLockReg(bool lock);
   uint8_t SensorStartupCheck();
   uint8_t ProtocolVersionCheck();
