@@ -176,7 +176,7 @@ class Sentry2 : public SentryFactory {
    *         other:  error
    */
   uint8_t SetParam(sentry_vision_e vision_type, sentry_object_t* param,
-                   int param_id = 0) {
+                   int param_id = 1) {
     return SentryFactory::SetParam((int)vision_type, param, param_id);
   }
   /**

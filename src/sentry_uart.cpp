@@ -85,8 +85,8 @@ sentry_err_t SentryUart::SetParam(int vision_type,
   pkg.len = 14;
   pkg.buf[0] = SENTRY_PROTOC_SET_PARAM;
   pkg.buf[1] = vision_type;
-  pkg.buf[2] = (uint8_t)param_id + 1;
-  pkg.buf[3] = (uint8_t)param_id + 1;
+  pkg.buf[2] = (uint8_t)param_id;
+  pkg.buf[3] = (uint8_t)param_id;
   pkg.buf[4] = (param->result_data1 >> 8) & 0xFF;
   pkg.buf[5] = param->result_data1 & 0xFF;
   pkg.buf[6] = (param->result_data2 >> 8) & 0xFF;

@@ -36,13 +36,13 @@ void setup() {
   printf("Sentry image_shape = %hux%hu\n", sentry.cols(), sentry.rows());
   printf("SENTRY_MAX_RESULT = %d\n", SENTRY_MAX_RESULT);
   sentry.SeneorSetCoordinateType(kAbsoluteCoordinate);
-  int param_num = 4;       // 1~SENTRY_MAX_RESULT
+  int param_num = 6;       // 1~SENTRY_MAX_RESULT
   sentry.SetParamNum(VISION_MASK, param_num);
   sentry_object_t param;
-  for (size_t i = 0; i < param_num; i++)
+  for (size_t i = 1; i <= param_num; i++)
   {
     /* Set x/y/w/h */
-    param.x_value = sentry.cols() * (i + 1) / (param_num + 1);
+    param.x_value = sentry.cols() * i / (param_num + 1);
     param.y_value = 120;
     param.width = i * 2 + 1;
     param.height = i * 2 + 1;

@@ -109,7 +109,7 @@ class SentryFactory {
    *         other:  error
    */
   virtual uint8_t SetParam(int vision_type, sentry_object_t* param,
-                   int param_id = 0) {
+                   int param_id = 1) {
     if (param_id < 0 || param_id >= SENTRY_MAX_RESULT) {
       return SENTRY_FAIL;
     }

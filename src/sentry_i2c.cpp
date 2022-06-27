@@ -65,7 +65,7 @@ sentry_err_t SentryI2C::SetParam(int vision_type,
 
   err = I2CWrite(kRegVisionId, vision_type);
   if (err) return err;
-  err = I2CWrite(kRegParamId, param_id + 1);
+  err = I2CWrite(kRegParamId, param_id);
   if (err) return err;
   I2CWrite(kRegParamValue1H, (param->result_data1 >> 8) & 0xFF);
   I2CWrite(kRegParamValue1L, param->result_data1 & 0xFF);
