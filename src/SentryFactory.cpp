@@ -273,11 +273,15 @@ uint8_t SentryFactory::VisionSetDefault(int vision_type) {
 }
 
 bool SentryFactory::VisionGetStatus(int vision_type) {
-  uint8_t vision_status1 = 0;
+  uint16_t vision_status;
+  uint8_t vision_status_l;
+  uint8_t vision_status_h;
 
-  stream_->Get(kRegVisionConfig1, &vision_status1);
+  stream_->Get(kRegVisionStatus1, &vision_status_l);
+  stream_->Get(kRegVisionStatus2, &vision_status_h);
+  vision_status = (vision_status_h << 8) | vision_status_l;
 
-  return (0x01 << vision_type) & vision_status1;
+  return (0x01UL << (vision_type - 1)) & vision_status;
 }
 
 uint8_t SentryFactory::UpdateResult(int vision_type) {
