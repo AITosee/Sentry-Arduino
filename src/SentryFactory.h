@@ -110,7 +110,7 @@ class SentryFactory {
    */
   virtual uint8_t SetParam(int vision_type, sentry_object_t* param,
                    int param_id = 1) {
-    if (param_id < 0 || param_id >= SENTRY_MAX_RESULT) {
+    if (param_id <= 0 || param_id > SENTRY_MAX_RESULT) {
       return SENTRY_FAIL;
     }
     return stream_->SetParam(vision_type, param, param_id);

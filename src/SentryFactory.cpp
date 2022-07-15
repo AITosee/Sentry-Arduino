@@ -151,7 +151,7 @@ uint8_t SentryFactory::begin(HwSentryI2C::hw_i2c_t *communication_port,
 // Advance interface
 uint8_t SentryFactory::VisionBegin(int vision_type) {
   sentry_err_t err;
-  uint8_t max_num;
+  int max_num;
 
   /* Set Max Result */
   max_num = GetParamNum(vision_type);
