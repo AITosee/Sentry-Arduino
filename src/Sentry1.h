@@ -17,113 +17,128 @@
 
 #include <SentryFactory.h>
 
-namespace tosee_sentry
-{
+namespace tosee_sentry {
 
 #define SENTRY1_DEVICE_ID 0x05
 
-  class Sentry1 : public SentryFactory
-  {
-  public:
-    Sentry1(uint32_t address = 0x60)
-        : SentryFactory(address, SENTRY1_DEVICE_ID, product_vision_state_,
-                        kVisionMaxType) {}
-    virtual ~Sentry1() {}
-    Sentry1(const Sentry1 &) = delete;
-    Sentry1 &operator=(const Sentry1 &) = delete;
+class Sentry1 : public SentryFactory {
+ public:
+  Sentry1(uint32_t address = 0x60)
+      : SentryFactory(address, SENTRY1_DEVICE_ID, product_vision_state_,
+                      kVisionMaxType) {}
+  virtual ~Sentry1() {}
+  Sentry1(const Sentry1 &) = delete;
+  Sentry1 &operator=(const Sentry1 &) = delete;
 
-    enum sentry_vision_e {
-      kVisionColor = 1,
-      kVisionBlob = 2,
-      kVisionBall = 3,
-      kVisionBody = 7,
-      kVisionTrafficCard = 12,
-      kVisionShapeCard = 13,
-      kVisionNumberCard = 14,
-      kVisionMaxType,
-    };
-
-    /* SentryFactory label */
-    enum
-    {
-      kUnknownLabel = 0
-    };
-    // /**
-    //  * @brief  begin vision.
-    //  * @param  vision_type: vision type.
-    //  * @retval SENTRY_OK:  success
-    //  *         other:  error
-    //  */
-    // uint8_t VisionBegin(sentry_vision_e vision_type) {
-    //   return SentryFactory::VisionBegin((int)vision_type);
-    // }
-    // /**
-    //  * @brief  end vision.
-    //  * @param  vision_type: vision type.
-    //  * @retval SENTRY_OK:  success
-    //  *         other:  error
-    //  */
-    // uint8_t VisionEnd(sentry_vision_e vision_type) {
-    //   return SentryFactory::VisionEnd((int)vision_type);
-    // }
-    // /**
-    //  * @brief  Set max detect object number.
-    //  * @param  vision_type: vision type.
-    //  * @param  param:  vision parameter
-    //  * @param  max_num:  max number
-    //  * @retval SENTRY_OK:  success
-    //  *         other:  error
-    //  */
-    // uint8_t SetParamNum(sentry_vision_e vision_type, int max_num) {
-    //   return SentryFactory::SetParamNum((int)vision_type, max_num);
-    // }
-    // /**
-    //  * @brief  write vision parameter.
-    //  * @param  vision_type: vision type.
-    //  * @param  param:  vision parameter
-    //  * @param  param_id:  parameter id
-    //  * @retval SENTRY_OK:  success
-    //  *         other:  error
-    //  */
-    // uint8_t SetParam(sentry_vision_e vision_type, sentry_object_t* param,
-    //                  int param_id = 1) {
-    //   return SentryFactory::SetParam((int)vision_type, param, param_id);
-    // }
-    // /**
-    //  * @brief  get vision result data, this function will update vision
-    //  *         result automatically.
-    //  * @param  vision_type: vision type.
-    //  * @param  obj_info:  object information
-    //  * @retval information value
-    //  */
-    // int GetValue(sentry_vision_e vision_type, sentry_obj_info_e obj_info,
-    //              int obj_id = 1) {
-    //   return SentryFactory::GetValue((int)vision_type, obj_info, obj_id);
-    // }
-
-    // bool VisionGetStatus(sentry_vision_e vision_type) {
-    //   return SentryFactory::VisionGetStatus((int)vision_type);
-    // }
-
-    // uint8_t VisionSetDefault(sentry_vision_e vision_type) {
-    //   return SentryFactory::VisionSetDefault((int)vision_type);
-    // }
-
-    // uint8_t UpdateResult(sentry_vision_e vision_type) {
-    //   return SentryFactory::UpdateResult((int)vision_type);
-    // }
-
-    char *GetQrCodeValue() override {
-      return nullptr;
-    }
-    int readQrCode(sentry_obj_info_e obj_info) override {
-      return -1;
-    }
-
-  private:
-    sentry_vision_state_t *product_vision_state_[kVisionMaxType - 1] = {nullptr};
+  enum sentry_vision_e {
+    kVisionColor = 1,
+    kVisionBlob = 2,
+    kVisionBall = 3,
+    kVisionBody = 7,
+    kVisionTrafficCard = 12,
+    kVisionShapeCard = 13,
+    kVisionNumberCard = 14,
+    kVisionMaxType,
+  };
+  /* Sentry card label */
+  enum traffic_card_label_e {
+    kCardForward = 1,
+    kCardLeft = 2,
+    kCardRight = 3,
+    kCardTurnAround = 4,
+    kCardPark = 5,
+  };
+  enum shape_card_label_e {
+    kCardCheck = 11,
+    kCardCross = 12,
+    kCardCircle = 13,
+    kCardSquare = 14,
+    kCardTriangle = 15,
+  };
+  /* SentryFactory color label */
+  enum color_label_e {
+    kColorBlack = 1,
+    kColorWhite = 2,
+    kColorRed = 3,
+    kColorGreen = 4,
+    kColorBlue = 5,
+    kColorYellow = 6
   };
 
-} // namespace tosee_sentry
+  /* SentryFactory label */
+  enum { kUnknownLabel = 0 };
+  /**
+   * @brief  begin vision.
+   * @param  vision_type: vision type.
+   * @retval SENTRY_OK:  success
+   *         other:  error
+   */
+  uint8_t VisionBegin(sentry_vision_e vision_type) {
+    return SentryFactory::VisionBegin((int)vision_type);
+  }
+  /**
+   * @brief  end vision.
+   * @param  vision_type: vision type.
+   * @retval SENTRY_OK:  success
+   *         other:  error
+   */
+  uint8_t VisionEnd(sentry_vision_e vision_type) {
+    return SentryFactory::VisionEnd((int)vision_type);
+  }
+  /**
+   * @brief  Set max detect object number.
+   * @param  vision_type: vision type.
+   * @param  param:  vision parameter
+   * @param  max_num:  max number
+   * @retval SENTRY_OK:  success
+   *         other:  error
+   */
+  uint8_t SetParamNum(sentry_vision_e vision_type, int max_num) {
+    return SentryFactory::SetParamNum((int)vision_type, max_num);
+  }
+  /**
+   * @brief  write vision parameter.
+   * @param  vision_type: vision type.
+   * @param  param:  vision parameter
+   * @param  param_id:  parameter id
+   * @retval SENTRY_OK:  success
+   *         other:  error
+   */
+  uint8_t SetParam(sentry_vision_e vision_type, sentry_object_t *param,
+                   int param_id = 1) {
+    return SentryFactory::SetParam((int)vision_type, param, param_id);
+  }
+  /**
+   * @brief  get vision result data, this function will update vision
+   *         result automatically.
+   * @param  vision_type: vision type.
+   * @param  obj_info:  object information
+   * @retval information value
+   */
+  int GetValue(sentry_vision_e vision_type, sentry_obj_info_e obj_info,
+               int obj_id = 1) {
+    return SentryFactory::GetValue((int)vision_type, obj_info, obj_id);
+  }
+
+  bool VisionGetStatus(sentry_vision_e vision_type) {
+    return SentryFactory::VisionGetStatus((int)vision_type);
+  }
+
+  uint8_t VisionSetDefault(sentry_vision_e vision_type) {
+    return SentryFactory::VisionSetDefault((int)vision_type);
+  }
+
+  uint8_t UpdateResult(sentry_vision_e vision_type) {
+    return SentryFactory::UpdateResult((int)vision_type);
+  }
+
+  char *GetQrCodeValue() override { return nullptr; }
+  int readQrCode(sentry_obj_info_e obj_info) override { return -1; }
+
+ private:
+  sentry_vision_state_t *product_vision_state_[kVisionMaxType - 1] = {nullptr};
+};
+
+}  // namespace tosee_sentry
 
 #endif /* SENTRY1_H_ */
