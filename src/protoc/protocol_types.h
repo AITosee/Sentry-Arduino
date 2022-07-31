@@ -54,14 +54,14 @@ struct device_t {
   data_queue_t data_q;
 };
 
-typedef SimpleNode<device_t> device_node_t;
-typedef SimpleList<device_node_t> device_list_t;
+typedef _SimpleNode<device_t> device_node_t;
+typedef _SimpleList<device_node_t> device_list_t;
 struct port_t {
   port_addr_t port_addr;
   device_list_t device_list;
 };
-typedef SimpleNode<port_t> port_node_t;
-typedef SimpleList<port_node_t> port_list_t;
+typedef _SimpleNode<port_t> port_node_t;
+typedef _SimpleList<port_node_t> port_list_t;
 
 }  // namespace tosee_sentry
 
