@@ -6,13 +6,8 @@ typedef Sentry1 Sentry;
 
 // #define SENTRY_I2C
 #define SENTRY_UART
-#define VISION_MASK Sentry::kVisionTrafficCard
+#define VISION_MASK Sentry::kVisionLine
 Sentry sentry;
-
-const char* traffic_card_classes[] = {
-  "unknown",
-  "forward",      "left",       "right",    "turn_around",  "park",
-};
 
 unsigned long ts = millis();
 unsigned long tn = ts;
@@ -40,7 +35,7 @@ void setup() {
   printf("Sentry begin Success.\n");
   printf("Sentry image_shape = %dx%d\n", sentry.cols(), sentry.rows());
   err = sentry.VisionBegin(VISION_MASK);
-  printf("sentry.VisionBegin(kVisionTrafficCard): %s[0x%x]\n", err ? "Error" : "Success", err);
+  printf("sentry.VisionBegin(kVisionLine): %s[0x%x]\n", err ? "Error" : "Success", err);
 }
 
 void loop() {
@@ -50,12 +45,13 @@ void loop() {
   if (obj_num) {
     printf("Totally %d objects in %lums:\n", obj_num, tn - ts);
     for (int i = 1; i <= obj_num; ++i) {
-      int x = sentry.GetValue(VISION_MASK, kXValue, i);
-      int y = sentry.GetValue(VISION_MASK, kYValue, i);
-      int w = sentry.GetValue(VISION_MASK, kWidthValue, i);
-      int h = sentry.GetValue(VISION_MASK, kHeightValue, i);
-      int l = sentry.GetValue(VISION_MASK, kLabel, i);
-      printf("  obj[%d]: x=%d,y=%d,w=%d,h=%d, label=%s\n", i, x, y, w, h, traffic_card_classes[l]);
+      int x1 = sentry.GetValue(VISION_MASK, kXValue, i);
+      int y1 = sentry.GetValue(VISION_MASK, kYValue, i);
+      int x2 = sentry.GetValue(VISION_MASK, kWidthValue, i);
+      int y2 = sentry.GetValue(VISION_MASK, kHeightValue, i);
+      int degree = sentry.GetValue(VISION_MASK, kLabel, i);
+      printf("  obj[%d]: x1=%d,y1=%d,x2=%d,y2=%d,degree=%d\n", i, x1, y1, x2,
+             y2, degree);
     }
   }
 }

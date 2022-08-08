@@ -34,10 +34,9 @@ class Sentry1 : public SentryFactory {
     kVisionColor = 1,
     kVisionBlob = 2,
     kVisionBall = 3,
+    kVisionLine = 4,
+    kVisionCard = 6,
     kVisionBody = 7,
-    kVisionTrafficCard = 12,
-    kVisionShapeCard = 13,
-    kVisionNumberCard = 14,
     kVisionMaxType,
   };
   /* Sentry card label */
