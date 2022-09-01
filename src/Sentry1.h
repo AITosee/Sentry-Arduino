@@ -40,21 +40,14 @@ class Sentry1 : public SentryFactory {
     kVisionMaxType,
   };
   /* Sentry card label */
-  enum traffic_card_label_e {
+  enum card_label_e {
     kCardForward = 1,
     kCardLeft = 2,
     kCardRight = 3,
     kCardTurnAround = 4,
     kCardPark = 5,
   };
-  enum shape_card_label_e {
-    kCardCheck = 11,
-    kCardCross = 12,
-    kCardCircle = 13,
-    kCardSquare = 14,
-    kCardTriangle = 15,
-  };
-  /* SentryFactory color label */
+  /* Sentry color label */
   enum color_label_e {
     kColorBlack = 1,
     kColorWhite = 2,
@@ -62,6 +55,11 @@ class Sentry1 : public SentryFactory {
     kColorGreen = 4,
     kColorBlue = 5,
     kColorYellow = 6
+  };
+  /* Sentry ball label */
+  enum ball_label_e {
+    kBallTableTennis = 1,
+    kBallTennis = 2
   };
 
   /* SentryFactory label */
