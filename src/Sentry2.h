@@ -40,6 +40,7 @@ class Sentry2 : public SentryFactory {
     kVisionFace = 7,
     kVision20Classes = 8,
     kVisionQrCode = 9,
+    kVisionCustom = 10,
     kVisionMotionDetect = 11,
     kVisionMaxType,
   };
