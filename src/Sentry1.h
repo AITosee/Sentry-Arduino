@@ -37,7 +37,8 @@ class Sentry1 : public SentryFactory {
     kVisionLine = 4,
     kVisionCard = 6,
     kVisionBody = 7,
-    kVisionCustom = 10,
+    kVisionQrCode = 9,
+    kVisionMotionDetect = 11,
     kVisionMaxType,
   };
   /* Sentry card label */
