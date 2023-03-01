@@ -48,7 +48,7 @@ void loop() {
     int y = sentry.GetValue(VISION_MASK, kYValue);
     int w = sentry.GetValue(VISION_MASK, kWidthValue);
     int h = sentry.GetValue(VISION_MASK, kHeightValue);
-    char c = sentry.GetValue(VISION_MASK, kLabel);
-    printf("  obj: x=%d,y=%d,w=%d,h=%d, value=%c\n", x, y, w, h, c);
+    char* c = sentry.GetQrCodeValue();
+    printf("  obj: x=%d,y=%d,w=%d,h=%d, value=%s\n", x, y, w, h, c);
   }
 }

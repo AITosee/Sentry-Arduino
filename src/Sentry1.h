@@ -25,7 +25,7 @@ class Sentry1 : public SentryFactory {
  public:
   Sentry1(uint32_t address = 0x60)
       : SentryFactory(address, SENTRY1_DEVICE_ID, product_vision_state_,
-                      kVisionMaxType) {}
+                      kVisionMaxType, kVisionQrCode) {}
   virtual ~Sentry1() {}
   Sentry1(const Sentry1 &) = delete;
   Sentry1 &operator=(const Sentry1 &) = delete;
