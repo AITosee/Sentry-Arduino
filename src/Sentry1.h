@@ -131,9 +131,6 @@ class Sentry1 : public SentryFactory {
     return SentryFactory::UpdateResult((int)vision_type);
   }
 
-  char *GetQrCodeValue() override { return nullptr; }
-  int readQrCode(sentry_obj_info_e obj_info) override { return -1; }
-
  private:
   sentry_vision_state_t *product_vision_state_[kVisionMaxType - 1] = {nullptr};
 };

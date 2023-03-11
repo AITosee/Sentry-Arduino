@@ -1,11 +1,21 @@
 #include <Arduino.h>
 #include <Sentry.h>
-#include <Wire.h>
 
 typedef Sentry2 Sentry;
 
 // #define SENTRY_I2C
 #define SENTRY_UART
+
+#ifdef SENTRY_I2C
+#include <Wire.h>
+#endif
+#ifdef SENTRY_UART
+#include <SoftwareSerial.h>
+#define TX_PIN 2
+#define RX_PIN 3
+SoftwareSerial mySerial(RX_PIN, TX_PIN);
+#endif
+
 Sentry sentry;
 
 int serial_putc(char c, struct __file*) {
@@ -27,8 +37,8 @@ void setup() {
   }
 #endif  // SENTRY_I2C
 #ifdef SENTRY_UART
-  Serial3.begin(9600);
-  while (SENTRY_OK != sentry.begin(&Serial3)) {
+  mySerial.begin(9600);
+  while (SENTRY_OK != sentry.begin(&mySerial)) {
     yield();
   }
 #endif  // SENTRY_UART
