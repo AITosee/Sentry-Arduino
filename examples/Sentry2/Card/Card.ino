@@ -3,16 +3,16 @@
 
 typedef Sentry2 Sentry;
 
-// #define SENTRY_I2C
-#define SENTRY_UART
+#define SENTRY_I2C
+// #define SENTRY_UART
 
 #ifdef SENTRY_I2C
 #include <Wire.h>
 #endif
 #ifdef SENTRY_UART
 #include <SoftwareSerial.h>
-#define TX_PIN 2
-#define RX_PIN 3
+#define TX_PIN 11
+#define RX_PIN 10
 SoftwareSerial mySerial(RX_PIN, TX_PIN);
 #endif
 
@@ -27,10 +27,7 @@ const char* card_classes[] = {
   "check",        "cross",      "circle",   "square",       "triangle",
   "plus",         "minus",      "divide",   "equal",
   "zero",         "one",        "two",      "three",        "four",
-  "five",         "six",        "seven",    "eight",        "nine",
-  "unknown",
-  "Aa", "Bb", "Cc", "Dd", "Ee", "Ff", "Gg", "Hh", "Ii", "Jj", "Kk", "Ll", "Mm", "Nn",
-  "Oo", "Pp", "Qq", "Rr", "Ss", "Tt", "Uu", "Vv", "Ww", "Xx", "Yy", "Zz"
+  "five",         "six",        "seven",    "eight",        "nine"
 };
 
 unsigned long ts = millis();

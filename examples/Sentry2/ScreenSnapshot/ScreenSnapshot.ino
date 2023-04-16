@@ -4,9 +4,9 @@
  * @brief 本示例程序用于介绍如何在Sentry2板载的ESP8285-WiFi芯片上获取一张图片,此例程并不适合UNO之类内存较小的开发板
  * @version 0.1
  * @date 2022-05-17
- * 
+ *
  * @copyright Copyright (c) 2022
- * 
+ *
  */
 #include <Arduino.h>
 #include <Sentry.h>
@@ -27,8 +27,7 @@ void setup() {
 }
 
 void loop() {
-  // 
-  err = sentry.Snapshot(kSnapshot2Wifi); // Default is: kSnapshotFromCamera, kSnapshotTypeJPEG
+  sentry_err_t err = sentry.Snapshot(kSnapshot2Wifi); // Default is: kSnapshotFromCamera, kSnapshotTypeJPEG
   // err = sentry.Snapshot(kSnapshot2Wifi, kSnapshotFromCamera, kSnapshotTypeJPEGBase64); // Base64 type
   // TODO: receive an image
 

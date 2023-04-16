@@ -3,16 +3,16 @@
 
 typedef Sentry2 Sentry;
 
-// #define SENTRY_I2C
-#define SENTRY_UART
+#define SENTRY_I2C
+// #define SENTRY_UART
 
 #ifdef SENTRY_I2C
 #include <Wire.h>
 #endif
 #ifdef SENTRY_UART
 #include <SoftwareSerial.h>
-#define TX_PIN 2
-#define RX_PIN 3
+#define TX_PIN 11
+#define RX_PIN 10
 SoftwareSerial mySerial(RX_PIN, TX_PIN);
 #endif
 
