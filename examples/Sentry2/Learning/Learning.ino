@@ -16,21 +16,15 @@ typedef Sentry2 Sentry;
 SoftwareSerial mySerial(RX_PIN, TX_PIN);
 #endif
 
-#define VISION_MASK Sentry::kVisionLearning
+#define VISION_TYPE Sentry::kVisionLearning
 Sentry sentry;
-
-int serial_putc(char c, struct __file*) {
-  Serial.write(c);
-  return c;
-}
 
 void setup() {
   sentry_err_t err = SENTRY_OK;
 
   Serial.begin(9600);
-  fdevopen(&serial_putc, 0);
 
-  printf("Waiting for sentry initialize...\n");
+  Serial.println("Waiting for sentry initialize...");
 #ifdef SENTRY_I2C
   Wire.begin();
   while (SENTRY_OK != sentry.begin(&Wire)) { yield(); }
@@ -39,21 +33,30 @@ void setup() {
   mySerial.begin(9600);
   while (SENTRY_OK != sentry.begin(&mySerial)) { yield(); }
 #endif  // SENTRY_UART
-  printf("Sentry begin Success.\n");
-  printf("Sentry image_shape = %hux%hu\n", sentry.cols(), sentry.rows());
-  err = sentry.VisionBegin(VISION_MASK);
-  printf("sentry.VisionBegin(kVisionLearning): %s[0x%x]\n", err ? "Error" : "Success", err);
+  Serial.println("Sentry begin Success.");
+  err = sentry.VisionBegin(VISION_TYPE);
+  Serial.print("sentry.VisionBegin(kVisionLearning) ");
+  if (err) {
+    Serial.print("Error: 0x");
+  } else {
+    Serial.print("Success: 0x");
+  }
+  Serial.println(err, HEX);
 }
 
 void loop() {
-  unsigned long ts = millis();
-  int obj_num = sentry.GetValue(VISION_MASK, kStatus);
-  unsigned long te = millis();
+  int obj_num = sentry.GetValue(VISION_TYPE, kStatus);
   if (obj_num) {
-    printf("Totally %d objects in %lums:\n", obj_num, te - ts);
+    Serial.print("Totally ");
+    Serial.print(obj_num);
+    Serial.println(" objects");
     for (int i = 1; i <= obj_num; ++i) {
-      int l = sentry.GetValue(VISION_MASK, kLabel, i);
-      printf("  obj[%d]: label=%d\n", i, l);
+      int l = sentry.GetValue(VISION_TYPE, kLabel, i);
+      Serial.print("  obj");
+      Serial.print(i);
+      Serial.print(": ");
+      Serial.print("label=");
+      Serial.println(l);
     }
   }
 }

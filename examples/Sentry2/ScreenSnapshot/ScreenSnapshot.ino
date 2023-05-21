@@ -17,12 +17,12 @@ void setup() {
   sentry_err_t err = SENTRY_OK;
 
   Serial.begin(4000000);
-  Serial.printf("Waiting for sentry initialize...\n");
+  Serial.Serial.println("Waiting for sentry initialize...");
 
   while (SENTRY_OK != sentry.begin(&Serial)) {
     yield();
   }
-  printf("Sentry begin Success.\n");
+  Serial.println("Sentry begin Success.");
   printf("Sentry image_shape = %hux%hu\n", sentry.cols(), sentry.rows());
 }
 

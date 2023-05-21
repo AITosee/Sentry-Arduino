@@ -27,9 +27,8 @@ void setup() {
   sentry_err_t err = SENTRY_OK;
 
   Serial.begin(9600);
-  fdevopen(&serial_putc, 0);
 
-  printf("Waiting for sentry initialize...\n");
+  Serial.println("Waiting for sentry initialize...");
 #ifdef SENTRY_I2C
   Wire.begin();
   while (SENTRY_OK != sentry.begin(&Wire)) {
@@ -42,7 +41,7 @@ void setup() {
     yield();
   }
 #endif  // SENTRY_UART
-  printf("Sentry begin Success.\n");
+  Serial.println("Sentry begin Success.");
   printf("Sentry image_shape = %hux%hu\n", sentry.cols(), sentry.rows());
   sentry.UserImageCoordinateConfig(1, 0, 0, 240, 240);
   sentry.ScreenShowFromFlash(1);

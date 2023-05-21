@@ -46,9 +46,7 @@ class Sentry2 : public SentryFactory {
   };
 
   /* SentryFactory label */
-  enum {
-    kUnknownLabel = 0
-  };
+  enum { kUnknownLabel = 0 };
   /* Sentry card label */
   enum card_label_e {
     kCardForward = 1,

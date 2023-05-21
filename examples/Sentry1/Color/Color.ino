@@ -16,24 +16,15 @@ typedef Sentry1 Sentry;
 SoftwareSerial mySerial(RX_PIN, TX_PIN);
 #endif
 
-#define VISION_MASK Sentry::kVisionColor
+#define VISION_TYPE Sentry::kVisionColor
 Sentry sentry;
-
-unsigned long ts = millis();
-unsigned long tn = ts;
-
-int serial_putc(char c, struct __file*) {
-  Serial.write(c);
-  return c;
-}
 
 void setup() {
   sentry_err_t err = SENTRY_OK;
 
   Serial.begin(9600);
-  fdevopen(&serial_putc, 0);
 
-  printf("Waiting for sentry initialize...\n");
+  Serial.println("Waiting for sentry initialize...");
 #ifdef SENTRY_I2C
   Wire.begin();
   while (SENTRY_OK != sentry.begin(&Wire)) { yield(); }
@@ -42,33 +33,52 @@ void setup() {
   mySerial.begin(9600);
   while (SENTRY_OK != sentry.begin(&mySerial)) { yield(); }
 #endif  // SENTRY_UART
-  printf("Sentry begin Success.\n");
-  printf("Sentry image_shape = %hux%hu\n", sentry.cols(), sentry.rows());
+  Serial.println("Sentry begin Success.");
   sentry_object_t param;
   param.x_value = sentry.cols() / 2;
   param.y_value = sentry.rows() / 2;
   param.width = 5;
   param.height = 5;
-  err = sentry.SetParam(VISION_MASK, &param);
+  err = sentry.SetParam(VISION_TYPE, &param);
   if (err) {
-    printf("sentry.SetParam: %s[0x%x]\n", err ? "Error" : "Success", err);
+    Serial.print("sentry.SetParam ");
+    if (err) {
+      Serial.print("Error: 0x");
+    } else {
+      Serial.print("Success: 0x");
+    }
+    Serial.println(err, HEX);
     for (;;);
   }
-  sentry.CameraSetAwb(kLockWhiteBalance);
-  err = sentry.VisionBegin(VISION_MASK);
-  printf("sentry.VisionBegin(kVisionColor): %s[0x%x]\n", err ? "Error" : "Success", err);
+  err = sentry.CameraSetAwb(kLockWhiteBalance);
+  Serial.print("sentry.CameraLockAwb ");
+  if (err) {
+    Serial.print("Error: 0x");
+  } else {
+    Serial.print("Success: 0x");
+  }
+  Serial.println(err, HEX);
+  err = sentry.VisionBegin(VISION_TYPE);
+  Serial.print("sentry.VisionBegin(kVisionColor) ");
+  if (err) {
+    Serial.print("Error: 0x");
+  } else {
+    Serial.print("Success: 0x");
+  }
+  Serial.println(err, HEX);
 }
 
 void loop() {
-  ts = tn;
-  int obj_num = sentry.GetValue(VISION_MASK, kStatus);
-  tn = millis();
+  int obj_num = sentry.GetValue(VISION_TYPE, kStatus);
   if (obj_num) {
-    printf("Totally %d objects in %lums:\n", obj_num, tn - ts);
+    Serial.print("Totally ");
+    Serial.print(obj_num);
+    Serial.println(" objects");
     for (int i = 1; i <= obj_num; ++i) {
-      int l = sentry.GetValue(VISION_MASK, kLabel, i);
-      printf("|%02d", l);
+      int l = sentry.GetValue(VISION_TYPE, kLabel, i);
+      Serial.print('|');
+      Serial.print(l);
     }
-    printf("|\n");
+    Serial.println('|');
   }
 }
