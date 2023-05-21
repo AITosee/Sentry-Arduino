@@ -174,7 +174,8 @@ int SentryFactory::GetValue(int vision_type, sentry_obj_info_e obj_info,
                             int obj_id) {
   if (obj_info == kStatus) {
     if ((vision_qrcode_type_ == vision_type && qrcode_state_ == NULL) ||
-        (vision_qrcode_type_ != vision_type && vision_state_[vision_type - 1] == NULL)) {
+        (vision_qrcode_type_ != vision_type &&
+         vision_state_[vision_type - 1] == NULL)) {
       /* Vison not enable */
       return 0;
     }
@@ -217,12 +218,15 @@ const sentry_vision_state_t *SentryFactory::GetVisionState(int vision_type) {
   return vision_state_[vision_type - 1];
 }
 
-uint8_t SentryFactory::SetVisionState(int vision_type, sentry_vision_state_t &state) {
+uint8_t SentryFactory::SetVisionState(int vision_type,
+                                      sentry_vision_state_t &state) {
   sentry_err_t err;
 
-  while(SENTRY_OK != SensorLockReg(true));
+  while (SENTRY_OK != SensorLockReg(true))
+    ;
   err = stream_->Write(vision_type, &state);
-  while(SENTRY_OK != SensorLockReg(false));
+  while (SENTRY_OK != SensorLockReg(false))
+    ;
 
   return err;
 }
@@ -289,15 +293,18 @@ uint8_t SentryFactory::UpdateResult(int vision_type) {
   uint8_t frame;
 
   /* Must make sure register is unlock! */
-  while(SENTRY_OK != SensorLockReg(false));
+  while (SENTRY_OK != SensorLockReg(false))
+    ;
   err = stream_->Get(kRegFrameCount, &frame);
   if (err) return SENTRY_FAIL;
   if (vision_qrcode_type_ == vision_type && qrcode_state_) {
     if (frame != qrcode_state_->frame) {
       sentry_qrcode_state_t qrcode_state;
-      while(SENTRY_OK != SensorLockReg(true));
+      while (SENTRY_OK != SensorLockReg(true))
+        ;
       err = stream_->ReadQrCode(vision_qrcode_type_, &qrcode_state);
-      while(SENTRY_OK != SensorLockReg(false));
+      while (SENTRY_OK != SensorLockReg(false))
+        ;
       if (err) return err;
       memcpy(qrcode_state_, &qrcode_state, sizeof(sentry_qrcode_state_t));
     } else {
@@ -307,9 +314,11 @@ uint8_t SentryFactory::UpdateResult(int vision_type) {
   } else if (vision_state_[vision_type - 1]) {
     if (frame != vision_state_[vision_type - 1]->frame) {
       sentry_vision_state_t vision_state;
-      while(SENTRY_OK != SensorLockReg(true));
+      while (SENTRY_OK != SensorLockReg(true))
+        ;
       err = stream_->Read(vision_type, &vision_state);
-      while(SENTRY_OK != SensorLockReg(false));
+      while (SENTRY_OK != SensorLockReg(false))
+        ;
       if (err) return err;
       memcpy(vision_state_[vision_type - 1], &vision_state,
              sizeof(sentry_vision_state_t));
@@ -329,12 +338,11 @@ int SentryFactory::read(int vision_type, sentry_obj_info_e obj_info,
                         uint8_t obj_id) {
   uint8_t vision_idx = vision_type - 1;
 
-  if (obj_id < 1 || obj_id >SENTRY_MAX_RESULT) {
+  if (obj_id < 1 || obj_id > SENTRY_MAX_RESULT) {
     return 0;
   }
   obj_id -= 1;
-  if (!vision_state_[vision_idx] || vision_idx >= vision_max_type_)
-    return 0;
+  if (!vision_state_[vision_idx] || vision_idx >= vision_max_type_) return 0;
   switch (obj_info) {
     case kStatus:
       return vision_state_[vision_idx]->detect;
@@ -424,7 +432,7 @@ uint8_t SentryFactory::SeneorSetCoordinateType(sentry_coordinate_type_e type) {
 
   err = stream_->Get(kRegHWConfig, &reg.value);
   if (err) return err;
-  if (type != reg.coordinate ) {
+  if (type != reg.coordinate) {
     reg.coordinate = type;
     err = stream_->Set(kRegHWConfig, reg.value);
   }
@@ -557,6 +565,11 @@ uint8_t SentryFactory::Snapshot(uint8_t image_dest,
   if (mode_ != kSerialMode) {
     return SENTRY_FAIL;
   }
+
+  err = stream_->Get(kRegSnapshot, &reg.value);
+  if (err) {
+    return err;
+  }
   reg.value &= 0xF0;
   reg.value |= image_dest;
   reg.source = image_src;
@@ -627,7 +640,8 @@ uint8_t SentryFactory::ScreenShow(uint8_t image_id, uint8_t auto_reload) {
   return err;
 }
 
-uint8_t SentryFactory::ScreenShowFromFlash(uint8_t image_id, uint8_t auto_reload) {
+uint8_t SentryFactory::ScreenShowFromFlash(uint8_t image_id,
+                                           uint8_t auto_reload) {
   sentry_err_t err;
   sentry_image_conf_t reg;
 

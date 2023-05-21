@@ -30,8 +30,7 @@ class SentryFactory {
    * @retval none
    */
   SentryFactory(uint32_t address, uint8_t device_id,
-                sentry_vision_state_t** vision_state,
-                const int vision_max_type,
+                sentry_vision_state_t** vision_state, const int vision_max_type,
                 const int vision_qrcode_type = 0);
   virtual ~SentryFactory();
 
@@ -109,7 +108,7 @@ class SentryFactory {
    *         other:  error
    */
   virtual uint8_t SetParam(int vision_type, sentry_object_t* param,
-                   int param_id = 1) {
+                           int param_id = 1) {
     if (param_id <= 0 || param_id > SENTRY_MAX_RESULT) {
       return SENTRY_FAIL;
     }
@@ -163,7 +162,8 @@ class SentryFactory {
 
   // LED functions
   /**
-   * @brief  Set led color, if detected_color == undetected_color, LED will always on.
+   * @brief  Set led color, if detected_color == undetected_color, LED will
+   * always on.
    * @param  detected_color led color while sensor detected target.
    * @param  undetected_color led color while sensor undetected target.
    * @param  level  led brightness, form 0(close) to 15
@@ -220,17 +220,17 @@ class SentryFactory {
   virtual uint8_t UartSetBaudrate(sentry_baudrate_e);
 
   /**
-   * @brief Start to take a snapshot from camera/screen to SD card/UART/USB/WIFI.
-   *        Receive Image data by ImageReceive functions
+   * @brief Start to take a snapshot from camera/screen to SD
+   * card/UART/USB/WIFI. Receive Image data by ImageReceive functions
    * @param image_dest Send image to SD or UART or USB or WIFI ports
    * @param image_src Image capture from camera or screen
    * @param image_type Snapshot image format
    * @retval SENTRY_OK:  success
    *         other:  error
    */
-  virtual uint8_t Snapshot(uint8_t image_dest,
-                           sentry_snapshot_src_e image_src = kSnapshotFromCamera,
-                           sentry_snapshot_type_e image_type = kSnapshotTypeJPEG);
+  virtual uint8_t Snapshot(
+      uint8_t image_dest, sentry_snapshot_src_e image_src = kSnapshotFromCamera,
+      sentry_snapshot_type_e image_type = kSnapshotTypeJPEG);
 
   // Screen functions
   /**
@@ -249,7 +249,8 @@ class SentryFactory {
   /**
    * @brief Screen config
    * @param enable Enable/Disable screen
-   * @param only_user_image Only display user image and don't display image from camera
+   * @param only_user_image Only display user image and don't display image from
+   * camera
    * @retval SENTRY_OK:  success
    *         other:  error
    */
@@ -267,7 +268,8 @@ class SentryFactory {
    * @retval SENTRY_OK:  success
    *         other:  error
    */
-  virtual uint8_t ScreenShowFromFlash(uint8_t image_id, uint8_t auto_reload = true);
+  virtual uint8_t ScreenShowFromFlash(uint8_t image_id,
+                                      uint8_t auto_reload = true);
   /**
    * @brief Fill the screen with colored(RGB) block.
    * @param image_id Image ID
