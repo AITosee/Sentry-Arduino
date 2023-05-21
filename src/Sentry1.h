@@ -48,6 +48,11 @@ class Sentry1 : public SentryFactory {
     kCardRight = 3,
     kCardTurnAround = 4,
     kCardPark = 5,
+    kCardCheck = 11,
+    kCardCross = 12,
+    kCardCircle = 13,
+    kCardSquare = 14,
+    kCardTriangle = 15,
   };
   /* Sentry color label */
   enum color_label_e {
@@ -59,10 +64,7 @@ class Sentry1 : public SentryFactory {
     kColorYellow = 6
   };
   /* Sentry ball label */
-  enum ball_label_e {
-    kBallTableTennis = 1,
-    kBallTennis = 2
-  };
+  enum ball_label_e { kBallTableTennis = 1, kBallTennis = 2 };
 
   /* SentryFactory label */
   enum { kUnknownLabel = 0 };
