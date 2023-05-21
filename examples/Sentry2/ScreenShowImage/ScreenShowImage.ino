@@ -42,7 +42,6 @@ void setup() {
   }
 #endif  // SENTRY_UART
   Serial.println("Sentry begin Success.");
-  printf("Sentry image_shape = %hux%hu\n", sentry.cols(), sentry.rows());
   sentry.UserImageCoordinateConfig(1, 0, 0, 240, 240);
   sentry.ScreenShowFromFlash(1);
   delay(5000);

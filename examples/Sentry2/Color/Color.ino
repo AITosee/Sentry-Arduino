@@ -46,7 +46,6 @@ void setup() {
     param.height = i * 2 + 1;
     err = sentry.SetParam(VISION_TYPE, &param, i);
     if (err) {
-      printf("sentry.SetParam: %s[0x%x]\n", err ? "Error" : "Success", err);
       Serial.print("sentry.SetParam");
       Serial.print(i);
       Serial.print(" Error: 0x");
