@@ -505,18 +505,10 @@ uint8_t SentryFactory::CameraSetZoom(sentry_camera_zoom_e zoom) {
 uint8_t SentryFactory::CameraSetAwb(sentry_camera_white_balance_e awb) {
   sentry_camera_conf1_t camera_config1;
   sentry_err_t err;
-  /* Waiting for camera white balance calibrating */
-  do {
-    err = stream_->Get(kRegCameraConfig1, &camera_config1.camera_reg_value);
-  } while (camera_config1.white_balance >= kWhiteBalanceCalibrating);
+  err = stream_->Get(kRegCameraConfig1, &camera_config1.camera_reg_value);
+  if (err) return err;
   camera_config1.white_balance = awb;
   err = stream_->Set(kRegCameraConfig1, camera_config1.camera_reg_value);
-  if (awb == kLockWhiteBalance) {
-    // waiting for lock white balance
-    do {
-      err = stream_->Get(kRegCameraConfig1, &camera_config1.camera_reg_value);
-    } while (camera_config1.white_balance >= kWhiteBalanceCalibrating);
-  }
   return err;
 }
 

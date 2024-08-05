@@ -18,6 +18,8 @@
 #include "Sentry1.h"
 #include "Sentry2.h"
 
+#include "Sengo1.h"
+
 using namespace tosee_sentry;
 
 #endif /* SENTRY_H_ */
