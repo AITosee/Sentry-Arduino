@@ -304,6 +304,26 @@ class SentryFactory {
    * @retval vision status
    */
   virtual bool VisionGetStatus(int vision_type);
+  /**
+   * @brief  set vision mode.
+   * @retval vision mode
+   */
+  virtual uint8_t VisionSetMode(int vision_type, int mode);
+  /**
+   * @brief  Get vision mode.
+   * @retval vision mode
+   */
+  virtual uint8_t VisionGetMode(int vision_type, int *mode);
+  /**
+   * @brief  set vision level.
+   * @retval vision Level
+   */
+  virtual uint8_t VisionSetLevel(int vision_type, sentry_vision_level_e level);
+  /**
+   * @brief  get vision level.
+   * @retval vision Level
+   */
+  virtual uint8_t VisionGetLevel(int vision_type, sentry_vision_level_e *level);
   virtual int rows() { return (int)img_h_; }
   virtual int cols() { return (int)img_w_; }
 

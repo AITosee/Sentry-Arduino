@@ -183,6 +183,12 @@ typedef enum {
   kWhiteBalanceCalibrating,
 } sentry_camera_white_balance_e;
 typedef enum {
+  kLevelDefault         = 0,
+  kLevelSpeed           = 1,      //!< speed first mode
+  kLevelBalance         = 2,      //!< balance mode
+  kLevelAccuracy        = 3,      //!< accuracy first mode
+} sentry_vision_level_e;
+typedef enum {
   kAbsoluteCoordinate = 0,
   kPercentageCoordinate = 1,
 } sentry_coordinate_type_e;
@@ -245,7 +251,13 @@ typedef union {
   };
   unsigned char vision_config_reg_value;
 } sentry_vision_conf1_t;
-
+typedef union {
+  struct {
+    unsigned char mode : 4;
+    sentry_vision_level_e level : 4;
+  };
+  unsigned char value;
+} sentry_vision_conf2_t;
 typedef union {
   struct {
     unsigned char output_mode :2;
