@@ -37,6 +37,7 @@ class Sengo1 : public SentryFactory {
     kVisionLine = 4,
     kVisionCard = 6,
     kVisionBody = 7,
+    kVisionFace = 8,
     kVisionQrCode = 9,
     kVisionMaxType,
   };
