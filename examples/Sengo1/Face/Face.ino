@@ -18,6 +18,7 @@ SoftwareSerial mySerial(RX_PIN, TX_PIN);
 
 #define VISION_TYPE Sengo::kVisionFace
 Sengo sengo;
+bool is_recorded_face = false;
 
 void setup() {
   sentry_err_t err = SENTRY_OK;
@@ -34,6 +35,17 @@ void setup() {
   while (SENTRY_OK != sengo.begin(&mySerial)) { yield(); }
 #endif  // SENTRY_UART
   Serial.println("Sengo begin Success.");
+  /* 清除 ID1 的人脸记录 */
+  sentry_object_t param{};
+  param.label = 0;
+  err = sengo.SetParam(VISION_TYPE, &param, 1);
+  Serial.print("sengo clear face ID1: ");
+  if (err) {
+    Serial.print("Error: 0x");
+  } else {
+    Serial.print("Success: 0x");
+  }
+  Serial.println(err, HEX);
   err = sengo.VisionBegin(VISION_TYPE);
   Serial.print("sengo.VisionBegin(kVisionFace) ");
   if (err) {
@@ -56,6 +68,21 @@ void loop() {
       int w = sengo.GetValue(VISION_TYPE, kWidthValue, i);
       int h = sengo.GetValue(VISION_TYPE, kHeightValue, i);
       int l = sengo.GetValue(VISION_TYPE, kLabel, i);
+      if (is_recorded_face == false && l == 0)
+      {
+        /* 记录第一个陌生人脸至人脸 ID1 内 */
+        is_recorded_face = true;
+        sentry_object_t param{};
+        param.label = 100;
+        sentry_err_t err = sengo.SetParam(VISION_TYPE, &param, 1);
+        Serial.print("sengo record face ID1: ");
+        if (err) {
+          Serial.print("Error: 0x");
+        } else {
+          Serial.print("Success: 0x");
+        }
+        Serial.println(err, HEX);
+      }
       Serial.print("  obj");
       Serial.print(i);
       Serial.print(": ");
