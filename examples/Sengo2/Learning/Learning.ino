@@ -3,13 +3,13 @@
 
 typedef Sengo2 Sengo;
 
-#define SENTRY_I2C
-// #define SENTRY_UART
+#define SENGO_I2C
+// #define SENGO_UART
 
-#ifdef SENTRY_I2C
+#ifdef SENGO_I2C
 #include <Wire.h>
 #endif
-#ifdef SENTRY_UART
+#ifdef SENGO_UART
 #include <SoftwareSerial.h>
 #define TX_PIN 11
 #define RX_PIN 10
@@ -25,14 +25,14 @@ void setup() {
   Serial.begin(9600);
 
   Serial.println("Waiting for sengo initialize...");
-#ifdef SENTRY_I2C
+#ifdef SENGO_I2C
   Wire.begin();
   while (SENTRY_OK != sengo.begin(&Wire)) { yield(); }
-#endif  // SENTRY_I2C
-#ifdef SENTRY_UART
+#endif  // SENGO_I2C
+#ifdef SENGO_UART
   mySerial.begin(9600);
   while (SENTRY_OK != sengo.begin(&mySerial)) { yield(); }
-#endif  // SENTRY_UART
+#endif  // SENGO_UART
   Serial.println("Sengo begin Success.");
   err = sengo.VisionBegin(VISION_TYPE);
   Serial.print("sengo.VisionBegin(kVisionLearning) ");
