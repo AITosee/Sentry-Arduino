@@ -30,7 +30,7 @@ class Sengo2 : public SentryFactory {
   Sengo2(const Sengo2&) = delete;
   Sengo2& operator=(const Sengo2&) = delete;
 
-  enum sentry_vision_e {
+  enum sengo_vision_e {
     kVisionColor = 1,
     kVisionBlob = 2,
     kVisionAprilTag = 3,
@@ -99,7 +99,7 @@ class Sengo2 : public SentryFactory {
    * @retval SENTRY_OK:  success
    *         other:  error
    */
-  uint8_t VisionBegin(sentry_vision_e vision_type) {
+  uint8_t VisionBegin(sengo_vision_e vision_type) {
     return SentryFactory::VisionBegin((int)vision_type);
   }
   /**
@@ -108,7 +108,7 @@ class Sengo2 : public SentryFactory {
    * @retval SENTRY_OK:  success
    *         other:  error
    */
-  uint8_t VisionEnd(sentry_vision_e vision_type) {
+  uint8_t VisionEnd(sengo_vision_e vision_type) {
     return SentryFactory::VisionEnd((int)vision_type);
   }
   /**
@@ -119,7 +119,7 @@ class Sengo2 : public SentryFactory {
    * @retval SENTRY_OK:  success
    *         other:  error
    */
-  uint8_t SetParamNum(sentry_vision_e vision_type, int max_num) {
+  uint8_t SetParamNum(sengo_vision_e vision_type, int max_num) {
     return SentryFactory::SetParamNum((int)vision_type, max_num);
   }
   /**
@@ -130,7 +130,7 @@ class Sengo2 : public SentryFactory {
    * @retval SENTRY_OK:  success
    *         other:  error
    */
-  uint8_t SetParam(sentry_vision_e vision_type, sentry_object_t* param,
+  uint8_t SetParam(sengo_vision_e vision_type, sentry_object_t* param,
                    int param_id = 1) {
     return SentryFactory::SetParam((int)vision_type, param, param_id);
   }
@@ -141,38 +141,38 @@ class Sengo2 : public SentryFactory {
    * @param  obj_info:  object information
    * @retval information value
    */
-  int GetValue(sentry_vision_e vision_type, sentry_obj_info_e obj_info,
+  int GetValue(sengo_vision_e vision_type, sentry_obj_info_e obj_info,
                int obj_id = 1) {
     return SentryFactory::GetValue((int)vision_type, obj_info, obj_id);
   }
 
-  bool VisionGetStatus(sentry_vision_e vision_type) {
+  bool VisionGetStatus(sengo_vision_e vision_type) {
     return SentryFactory::VisionGetStatus((int)vision_type);
   }
 
-  uint8_t VisionSetMode(sentry_vision_e vision_type, int mode) {
+  uint8_t VisionSetMode(sengo_vision_e vision_type, int mode) {
     return SentryFactory::VisionSetMode((int)vision_type, mode);
   }
 
-  uint8_t VisionGetMode(sentry_vision_e vision_type, int *mode) {
+  uint8_t VisionGetMode(sengo_vision_e vision_type, int *mode) {
     return SentryFactory::VisionGetMode((int)vision_type, mode);
   }
 
-  uint8_t VisionSetLevel(sentry_vision_e vision_type,
+  uint8_t VisionSetLevel(sengo_vision_e vision_type,
                          sentry_vision_level_e level) {
     return SentryFactory::VisionSetLevel((int)vision_type, level);
   }
 
-  uint8_t VisionGetLevel(sentry_vision_e vision_type,
+  uint8_t VisionGetLevel(sengo_vision_e vision_type,
                          sentry_vision_level_e *level) {
     return SentryFactory::VisionGetLevel((int)vision_type, level);
   }
 
-  uint8_t VisionSetDefault(sentry_vision_e vision_type) {
+  uint8_t VisionSetDefault(sengo_vision_e vision_type) {
     return SentryFactory::VisionSetDefault((int)vision_type);
   }
 
-  uint8_t UpdateResult(sentry_vision_e vision_type) {
+  uint8_t UpdateResult(sengo_vision_e vision_type) {
     return SentryFactory::UpdateResult((int)vision_type);
   }
 
