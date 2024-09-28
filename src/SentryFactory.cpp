@@ -288,6 +288,66 @@ bool SentryFactory::VisionGetStatus(int vision_type) {
   return (0x01UL << (vision_type - 1)) & vision_status;
 }
 
+uint8_t SentryFactory::VisionSetMode(int vision_type, int mode) {
+  sentry_err_t err;
+  sentry_vision_conf2_t vision_config2;
+
+  err = stream_->Set(kRegVisionId, vision_type);
+  if (err) return err;
+  err =
+      stream_->Get(kRegVisionConfig2, &vision_config2.value);
+  if (err) return err;
+  if (vision_config2.mode != mode) {
+    vision_config2.mode = mode;
+    err = stream_->Set(kRegVisionConfig2, vision_config2.value);
+  }
+  return err;
+}
+
+uint8_t SentryFactory::VisionGetMode(int vision_type, int *mode) {
+  sentry_err_t err;
+  sentry_vision_conf2_t vision_config2;
+
+  err = stream_->Set(kRegVisionId, vision_type);
+  if (err) return err;
+  err =
+      stream_->Get(kRegVisionConfig2, &vision_config2.value);
+  if (err) return err;
+  *mode = vision_config2.mode;
+  return err;
+}
+
+uint8_t SentryFactory::VisionSetLevel(int vision_type,
+                                      sentry_vision_level_e level) {
+  sentry_err_t err;
+  sentry_vision_conf2_t vision_config2;
+
+  err = stream_->Set(kRegVisionId, vision_type);
+  if (err) return err;
+  err =
+      stream_->Get(kRegVisionConfig2, &vision_config2.value);
+  if (err) return err;
+  if (vision_config2.level != level) {
+    vision_config2.level = level;
+    err = stream_->Set(kRegVisionConfig2, vision_config2.value);
+  }
+  return err;
+}
+
+uint8_t SentryFactory::VisionGetLevel(int vision_type,
+                                      sentry_vision_level_e *level) {
+  sentry_err_t err;
+  sentry_vision_conf2_t vision_config2;
+
+  err = stream_->Set(kRegVisionId, vision_type);
+  if (err) return err;
+  err =
+      stream_->Get(kRegVisionConfig2, &vision_config2.value);
+  if (err) return err;
+  *level = vision_config2.level;
+  return err;
+}
+
 uint8_t SentryFactory::UpdateResult(int vision_type) {
   sentry_err_t err;
   uint8_t frame;
@@ -505,18 +565,10 @@ uint8_t SentryFactory::CameraSetZoom(sentry_camera_zoom_e zoom) {
 uint8_t SentryFactory::CameraSetAwb(sentry_camera_white_balance_e awb) {
   sentry_camera_conf1_t camera_config1;
   sentry_err_t err;
-  /* Waiting for camera white balance calibrating */
-  do {
-    err = stream_->Get(kRegCameraConfig1, &camera_config1.camera_reg_value);
-  } while (camera_config1.white_balance >= kWhiteBalanceCalibrating);
+  err = stream_->Get(kRegCameraConfig1, &camera_config1.camera_reg_value);
+  if (err) return err;
   camera_config1.white_balance = awb;
   err = stream_->Set(kRegCameraConfig1, camera_config1.camera_reg_value);
-  if (awb == kLockWhiteBalance) {
-    // waiting for lock white balance
-    do {
-      err = stream_->Get(kRegCameraConfig1, &camera_config1.camera_reg_value);
-    } while (camera_config1.white_balance >= kWhiteBalanceCalibrating);
-  }
   return err;
 }
 

@@ -12,41 +12,35 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef SENTRY2_H_
-#define SENTRY2_H_
+#ifndef SENGO1_H_
+#define SENGO1_H_
 
 #include <SentryFactory.h>
 
 namespace tosee_sentry {
 
-#define SENTRY2_DEVICE_ID 0x04
+#define SENGO1_DEVICE_ID 0x06
 
-class Sentry2 : public SentryFactory {
+class Sengo1 : public SentryFactory {
  public:
-  Sentry2(uint32_t address = 0x60)
-      : SentryFactory(address, SENTRY2_DEVICE_ID, product_vision_state_,
+  Sengo1(uint32_t address = 0x60)
+      : SentryFactory(address, SENGO1_DEVICE_ID, product_vision_state_,
                       kVisionMaxType, kVisionQrCode) {}
-  virtual ~Sentry2() {}
-  Sentry2(const Sentry2&) = delete;
-  Sentry2& operator=(const Sentry2&) = delete;
+  virtual ~Sengo1() {}
+  Sengo1(const Sengo1 &) = delete;
+  Sengo1 &operator=(const Sengo1 &) = delete;
 
-  enum sentry_vision_e {
+  enum sengo_vision_e {
     kVisionColor = 1,
     kVisionBlob = 2,
-    kVisionAprilTag = 3,
+    kVisionBall = 3,
     kVisionLine = 4,
-    kVisionLearning = 5,
     kVisionCard = 6,
-    kVisionFace = 7,
-    kVision20Classes = 8,
+    kVisionBody = 7,
+    kVisionFace = 8,
     kVisionQrCode = 9,
-    kVisionCustom = 10,
-    kVisionMotionDetect = 11,
     kVisionMaxType,
   };
-
-  /* SentryFactory label */
-  enum { kUnknownLabel = 0 };
   /* Sentry card label */
   enum card_label_e {
     kCardForward = 1,
@@ -54,55 +48,8 @@ class Sentry2 : public SentryFactory {
     kCardRight = 3,
     kCardTurnAround = 4,
     kCardPark = 5,
-    kCardGreenLight = 6,
-    kCardRedLight = 7,
-    kCardSpeed40 = 8,
-    kCardSpeed60 = 9,
-    kCardSpeed80 = 10,
-    kCardCheck = 11,
-    kCardCross = 12,
-    kCardCircle = 13,
-    kCardSquare = 14,
-    kCardTriangle = 15,
-    kCardPlus = 16,
-    kCardMinus = 17,
-    kCardDivide = 18,
-    kCardEqual = 19,
-    kCardZero = 20,
-    kCardOne = 21,
-    kCardTwo = 22,
-    kCardThree = 23,
-    kCardFour = 24,
-    kCardFive = 25,
-    kCardSix = 26,
-    kCardSeven = 27,
-    kCardEight = 28,
-    kCardNine = 29,
   };
-  /* SentryFactory 20 classes label */
-  enum class20_label_e {
-    kAirplane = 1,
-    kBicycle = 2,
-    kBird = 3,
-    kBoat = 4,
-    kBottle = 5,
-    kBus = 6,
-    kCar = 7,
-    kCat = 8,
-    kChair = 9,
-    kCow = 10,
-    kDiningTable = 11,
-    kDog = 12,
-    kHorse = 13,
-    kMotorBike = 14,
-    kPerson = 15,
-    kPottedPlant = 16,
-    kSheep = 17,
-    kSofa = 18,
-    kTrain = 19,
-    kTvMonitor = 20
-  };
-  /* SentryFactory color label */
+  /* Sentry color label */
   enum color_label_e {
     kColorBlack = 1,
     kColorWhite = 2,
@@ -111,13 +58,18 @@ class Sentry2 : public SentryFactory {
     kColorBlue = 5,
     kColorYellow = 6
   };
+  /* Sentry ball label */
+  enum ball_label_e { kBallTableTennis = 1, kBallTennis = 2 };
+
+  /* SentryFactory label */
+  enum { kUnknownLabel = 0 };
   /**
    * @brief  begin vision.
    * @param  vision_type: vision type.
    * @retval SENTRY_OK:  success
    *         other:  error
    */
-  uint8_t VisionBegin(sentry_vision_e vision_type) {
+  uint8_t VisionBegin(sengo_vision_e vision_type) {
     return SentryFactory::VisionBegin((int)vision_type);
   }
   /**
@@ -126,7 +78,7 @@ class Sentry2 : public SentryFactory {
    * @retval SENTRY_OK:  success
    *         other:  error
    */
-  uint8_t VisionEnd(sentry_vision_e vision_type) {
+  uint8_t VisionEnd(sengo_vision_e vision_type) {
     return SentryFactory::VisionEnd((int)vision_type);
   }
   /**
@@ -137,7 +89,7 @@ class Sentry2 : public SentryFactory {
    * @retval SENTRY_OK:  success
    *         other:  error
    */
-  uint8_t SetParamNum(sentry_vision_e vision_type, int max_num) {
+  uint8_t SetParamNum(sengo_vision_e vision_type, int max_num) {
     return SentryFactory::SetParamNum((int)vision_type, max_num);
   }
   /**
@@ -148,7 +100,7 @@ class Sentry2 : public SentryFactory {
    * @retval SENTRY_OK:  success
    *         other:  error
    */
-  uint8_t SetParam(sentry_vision_e vision_type, sentry_object_t* param,
+  uint8_t SetParam(sengo_vision_e vision_type, sentry_object_t *param,
                    int param_id = 1) {
     return SentryFactory::SetParam((int)vision_type, param, param_id);
   }
@@ -159,27 +111,32 @@ class Sentry2 : public SentryFactory {
    * @param  obj_info:  object information
    * @retval information value
    */
-  int GetValue(sentry_vision_e vision_type, sentry_obj_info_e obj_info,
+  int GetValue(sengo_vision_e vision_type, sentry_obj_info_e obj_info,
                int obj_id = 1) {
     return SentryFactory::GetValue((int)vision_type, obj_info, obj_id);
   }
 
-  bool VisionGetStatus(sentry_vision_e vision_type) {
+  bool VisionGetStatus(sengo_vision_e vision_type) {
     return SentryFactory::VisionGetStatus((int)vision_type);
   }
 
-  uint8_t VisionSetDefault(sentry_vision_e vision_type) {
+  uint8_t VisionSetDefault(sengo_vision_e vision_type) {
     return SentryFactory::VisionSetDefault((int)vision_type);
   }
 
-  uint8_t UpdateResult(sentry_vision_e vision_type) {
+  uint8_t UpdateResult(sengo_vision_e vision_type) {
     return SentryFactory::UpdateResult((int)vision_type);
   }
 
+  uint8_t CameraSetAwb(sentry_camera_white_balance_e) {
+    /* Sengo1 DO NOT support configurate white balance */
+    return SENTRY_FAIL;
+  }
+
  private:
-  sentry_vision_state_t* product_vision_state_[kVisionMaxType - 1] = {nullptr};
+  sentry_vision_state_t *product_vision_state_[kVisionMaxType - 1] = {nullptr};
 };
 
 }  // namespace tosee_sentry
 
-#endif /* SENTRY2_H_ */
+#endif /* SENGO1_H_ */
