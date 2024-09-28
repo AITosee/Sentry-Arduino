@@ -67,16 +67,16 @@ class Sengo2 : public SentryFactory {
     kCat = 8,
     kChair = 9,
     kCow = 10,
-    kTable = 11,
+    kDiningTable = 11,
     kDog = 12,
     kHorse = 13,
     kMotorBike = 14,
     kPerson = 15,
-    kPlant = 16,
+    kPottedPlant = 16,
     kSheep = 17,
     kSofa = 18,
     kTrain = 19,
-    kMonitor = 20
+    kTvMonitor = 20
   };
   /* SentryFactory color label */
   enum color_label_e {
