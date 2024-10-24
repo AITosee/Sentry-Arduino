@@ -40,7 +40,6 @@ class Sengo2 : public SentryFactory {
     kVisionFace = 7,
     kVision20Classes = 8,
     kVisionQrCode = 9,
-    kVisionCustom = 10,
     kVisionMotionDetect = 11,
     kVisionMaxType,
   };
@@ -54,6 +53,11 @@ class Sengo2 : public SentryFactory {
     kCardRight = 3,
     kCardTurnAround = 4,
     kCardPark = 5,
+    kCardGreenLight = 6,
+    kCardRedLight = 7,
+    kCardSpeed40 = 8,
+    kCardSpeed60 = 9,
+    kCardSpeed80 = 10
   };
   /* SentryFactory 20 classes label */
   enum class20_label_e {
