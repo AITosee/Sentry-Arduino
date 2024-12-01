@@ -205,7 +205,11 @@ int SentryFactory::GetParamNum(int vision_type) {
 uint8_t SentryFactory::SetParamNum(int vision_type, int max_num) {
   sentry_err_t err;
 
-  max_num = max_num > SENTRY_MAX_RESULT ? SENTRY_MAX_RESULT : max_num;
+  /* Vision Color's parameter number should <= SENTRY_MAX_RESULT */
+  if (vision_type == 1)
+  {
+    max_num = max_num > SENTRY_MAX_RESULT ? SENTRY_MAX_RESULT : max_num;
+  }
   err = stream_->Set(kRegVisionId, vision_type);
   if (err) return err;
 
